@@ -1,9 +1,13 @@
 import { Hono } from 'hono'
+import { logger } from 'hono/logger'
+import { apiRoute } from './api'
 
-const app = new Hono()
+export const app = new Hono()
+
+app.use('*', logger())
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
-export default app
+app.route('/api', apiRoute)
