@@ -1,7 +1,7 @@
 import { api } from '@/lib/api'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/todos')({
+export const Route = createFileRoute('/todos')({
   component: TodosPage,
 })
 
