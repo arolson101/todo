@@ -4,7 +4,7 @@ import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
 
-export const app = new Hono()
+const app = new Hono()
 
 app.use('*', logger())
 
@@ -16,5 +16,7 @@ app.use(
   }),
 )
 
-app.use('*', serveStatic({ root: './frontend/dist' }))
-app.use('*', serveStatic({ root: './frontend/dist/index.html' }))
+app.use('*', serveStatic({ root: './public' }))
+app.use('*', serveStatic({ path: './public/index.html' }))
+
+export default app
