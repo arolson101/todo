@@ -8,8 +8,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@server/*": ["../server/*"]
+      "@/*": ["./app/*"],
+      "@server/*": ["./server/*"]
     },
 
     /* Bundler mode */
@@ -26,5 +26,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["app"]
 }

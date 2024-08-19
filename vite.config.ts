@@ -7,7 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [tsconfigPaths(), TanStackRouterVite(), react()],
   build: {
-    outDir: '../dist/public',
+    outDir: './dist/public',
     emptyOutDir: true,
   },
   server: {
