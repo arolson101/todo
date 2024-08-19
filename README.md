@@ -1,4 +1,4 @@
-# todo
+# todo starter app
 
 To install dependencies:
 
@@ -6,13 +6,23 @@ To install dependencies:
 bun install
 ```
 
-To run:
+To run in development:
 
 ```bash
-bun run index.ts
+bun dev
 ```
 
-This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+To build for deployment:
+
+```bash
+bun run build
+```
+
+To run the build:
+
+```bash
+bun start
+```
 
 # todo
 
