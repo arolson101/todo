@@ -26,3 +26,6 @@ This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) 
 - [x] shadcn/ui
 - [x] tanstack router
 - [x] trpc
+- [ ] tanstack form
+- [ ] drizzle
+- [ ] auth

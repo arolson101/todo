@@ -30,13 +30,11 @@ const todos: Todo[] = [
 const createTodoSchema = Todo.omit({ id: true })
 
 export const todoRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      }
-    }),
+  hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
+    return {
+      greeting: `Hello ${input.text}`,
+    }
+  }),
 
   getSecretMessage: protectedProcedure //
     .query(() => {
