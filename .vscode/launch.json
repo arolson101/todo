@@ -1,0 +1,23 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // not working on windows yet - see https://github.com/oven-sh/bun/issues/8851
+      "type": "bun",
+      "request": "launch",
+      "name": "Debug Server",
+      "program": "server/index.ts",
+      "watchMode": "hot"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}
