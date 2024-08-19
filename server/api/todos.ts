@@ -27,23 +27,23 @@ const todos: Todo[] = [
   },
 ]
 
-const createPostSchema = Todo.omit({ id: true })
+const createTodoSchema = Todo.omit({ id: true })
 
-export const postsRoute = new Hono()
+export const todosRoute = new Hono()
   .get('/', (c) => {
-    return c.json({ posts: todos })
+    return c.json({ todos })
   })
-  .post('/', zValidator('json', createPostSchema), (c) => {
-    const post = c.req.valid('json')
-    todos.push({ ...post, id: makeId(todos.length + 1) })
+  .post('/', zValidator('json', createTodoSchema), (c) => {
+    const todo = c.req.valid('json')
+    todos.push({ ...todo, id: makeId(todos.length + 1) })
     c.status(201)
-    return c.json({ post: todos[todos.length - 1] })
+    return c.json({ todo: todos[todos.length - 1] })
   })
   .get('/:id', (c) => {
     const id = c.req.param('id')
-    const post = todos.find((p) => p.id === id)
-    if (!post) {
+    const todo = todos.find((p) => p.id === id)
+    if (!todo) {
       return c.notFound()
     }
-    return c.json({ post })
+    return c.json({ todo })
   })
