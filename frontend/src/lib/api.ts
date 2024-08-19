@@ -1,10 +1,19 @@
-import { hc } from 'hono/client'
-import type { ApiRoutes } from '@server/app'
+import { createTRPCReact } from '@trpc/react-query'
+import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
+import type { AppRouter } from '@server/api'
 
-const client = hc<ApiRoutes>('/', {
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+export const api = createTRPCReact<AppRouter>()
 
-export const api = client.api
+/**
+ * Inference helper for inputs.
+ *
+ * @example type HelloInput = RouterInputs['example']['hello']
+ */
+export type RouterInputs = inferRouterInputs<AppRouter>
+
+/**
+ * Inference helper for outputs.
+ *
+ * @example type HelloOutput = RouterOutputs['example']['hello']
+ */
+export type RouterOutputs = inferRouterOutputs<AppRouter>
