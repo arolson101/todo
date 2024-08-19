@@ -3,15 +3,18 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot index.ts"
+    "dev": "bun run --hot index.ts",
+    "format": "prettier --write index.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prettier": "^3.3.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "hono": "^4.5.6"
   }
 }

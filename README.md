@@ -17,6 +17,8 @@ This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) 
 # todo
 - [x] git init depot
 - [x] bun init
-- [x] hono init
-- [ ] prettier
+- [x] hono
+- [x] prettier/editorconfig
 - [ ] vite
+- [ ] RPC/zod
+- [ ] tanstack router
