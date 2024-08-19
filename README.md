@@ -24,5 +24,5 @@ This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) 
 - [x] vite proxy
 - [x] tailwind
 - [x] shadcn/ui
-- [ ] react-query
+- [x] react-query
 - [ ] tanstack router

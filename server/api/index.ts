@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { postsRoute } from './posts'
+import { postsRoute as todosRoute } from './todos'
 
 export const apiRoute = new Hono() //
-  .route('/posts', postsRoute)
+  .route('/todos', todosRoute)
