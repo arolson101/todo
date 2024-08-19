@@ -1,9 +1,20 @@
 import { ThemeProvider } from '@/components/theme-provider'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './components/ui/button'
+import { api } from './lib/api'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    async function foo() {
+      const res = await api.posts.$get()
+      const json = await res.json()
+      const posts = json.posts
+    }
+
+    foo()
+  }, [])
 
   return (
     <>
