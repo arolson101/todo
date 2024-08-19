@@ -19,6 +19,7 @@ This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) 
 - [x] bun init
 - [x] hono
 - [x] prettier/editorconfig
-- [ ] vite
+- [ ] vite frontend
+- [ ] vite proxy
 - [ ] RPC/zod
 - [ ] tanstack router
