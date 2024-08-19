@@ -23,6 +23,6 @@ This project was created using `bun init` in bun v1.1.24. [Bun](https://bun.sh) 
 - [x] RPC/zod
 - [x] vite proxy
 - [x] tailwind
-- [ ] shadcn/ui
+- [x] shadcn/ui
 - [ ] react-query
 - [ ] tanstack router
