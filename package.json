@@ -6,7 +6,7 @@
     "dev": "concurrently \"bun dev:frontend\" \"bun dev:server\"",
     "dev:frontend": "cd frontend && bun dev",
     "dev:server": "bun run --hot server/app.ts",
-    "format": "prettier --write **",
+    "format": "prettier --write .",
     "build": "concurrently \"bun build:server\" \"bun build:frontend\"",
     "build:frontend": "cd frontend && bun run build",
     "build:server": "cross-env NODE_ENV=production bun run scripts/build.ts",
