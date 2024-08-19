@@ -1,25 +1,16 @@
 {
   "name": "todo",
-  "module": "index.ts",
   "type": "module",
+  "module": "index.ts",
   "scripts": {
+    "build": "concurrently \"bun build:server\" \"bun build:frontend\"",
+    "build:frontend": "cd frontend && bun run build",
+    "build:server": "cross-env NODE_ENV=production bun run scripts/build.ts",
     "dev": "concurrently \"bun dev:frontend\" \"bun dev:server\"",
     "dev:frontend": "cd frontend && bun dev",
     "dev:server": "bun run --hot server/app.ts",
     "format": "prettier --write .",
-    "build": "concurrently \"bun build:server\" \"bun build:frontend\"",
-    "build:frontend": "cd frontend && bun run build",
-    "build:server": "cross-env NODE_ENV=production bun run scripts/build.ts",
     "start": "cd dist && cross-env NODE_ENV=production bun run index.js"
-  },
-  "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/bun": "latest",
-    "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
   },
   "dependencies": {
     "@hono/trpc-server": "^0.3.2",
@@ -30,5 +21,15 @@
     "hono": "^4.5.6",
     "superjson": "^2.2.1",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/bun": "latest",
+    "prettier": "^3.3.3",
+    "prettier-plugin-packagejson": "^2.5.1",
+    "prettier-plugin-tailwindcss": "^0.6.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }
