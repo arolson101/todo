@@ -1,6 +1,6 @@
-import { serveStatic } from '@hono/node-server/serve-static'
 import { trpcServer } from '@hono/trpc-server'
 import { Hono } from 'hono'
+import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
 
