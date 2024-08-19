@@ -1,9 +1,7 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import './app.css'
 import { ThemeProvider } from './components/theme-provider'
 import { TRPCReactProvider } from './components/trpc-react-provider'
-import './index.css'
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
@@ -16,12 +14,12 @@ declare module '@tanstack/react-router' {
   }
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+export function App() {
+  return (
     <TRPCReactProvider>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <RouterProvider router={router} />
       </ThemeProvider>
     </TRPCReactProvider>
-  </StrictMode>,
-)
+  )
+}
