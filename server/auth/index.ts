@@ -52,7 +52,10 @@ function getAuthConfig(c: Context<Environment>): AuthConfig {
             throw new Error('User not found.')
           }
 
-          Bun.password.verify(password, user.passwordHash ?? '')
+          const verified = await Bun.password.verify(password, user.passwordHash ?? '')
+          if (!verified) {
+            throw new Error('Wrong password.')
+          }
 
           // return user object with their profile data
           return user

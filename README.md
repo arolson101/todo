@@ -38,5 +38,7 @@ bun start
 - [x] trpc
 - [x] env
 - [x] database
-- [ ] auth
+- [x] auth
 - [ ] tanstack form
+- [ ] signin/signup/signout pages
+- [ ] first time setup
