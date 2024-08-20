@@ -1,3 +1,4 @@
+import { SessionProvider } from '@hono/auth-js/react'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import './app.css'
 import { ThemeProvider } from './components/theme-provider'
@@ -16,10 +17,12 @@ declare module '@tanstack/react-router' {
 
 export function App() {
   return (
-    <TRPCReactProvider>
-      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </TRPCReactProvider>
+    <SessionProvider>
+      <TRPCReactProvider>
+        <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </TRPCReactProvider>
+    </SessionProvider>
   )
 }

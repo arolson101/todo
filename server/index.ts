@@ -4,11 +4,15 @@ import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
+import { authConfig, authHandler, verifyAuth } from './auth'
 import { type Environment } from './env'
 
 const app = new Hono<Environment>()
 
 app.use('*', logger())
+
+app.use('*', authConfig)
+app.use('/api/auth/*', authHandler())
 
 app.use(
   '/api/trpc/*',

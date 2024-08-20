@@ -1,3 +1,4 @@
+import { useSession } from '@hono/auth-js/react'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/about')({
@@ -5,5 +6,12 @@ export const Route = createFileRoute('/about')({
 })
 
 function About() {
-  return <div className='p-2'>Hello from About!</div>
+  const { data: session, status } = useSession()
+
+  return (
+    <>
+      <div className='p-2'>Session status: {status}</div>
+      <div className='p-2'>I am {session?.user?.name ?? 'not signed in'}</div>
+    </>
+  )
 }
