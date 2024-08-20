@@ -37,6 +37,6 @@ bun start
 - [x] tanstack router
 - [x] trpc
 - [x] env
-- [ ] database
+- [x] database
 - [ ] auth
 - [ ] tanstack form
