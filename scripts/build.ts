@@ -1,4 +1,7 @@
 import CopyBunPlugin from '@takinabradley/copybunplugin'
+import path from 'path'
+
+const projectDir = (...paths: string[]) => path.join(import.meta.dir, '..', ...paths).replaceAll('\\', '/') + '/'
 
 await Bun.build({
   entrypoints: ['./server/index.ts'],
@@ -11,12 +14,12 @@ await Bun.build({
     CopyBunPlugin({
       patterns: [
         {
-          from: import.meta.dir + '/../drizzle/meta/',
-          to: import.meta.dir + '/../dist/drizzle/meta/',
+          from: projectDir('drizzle'),
+          to: projectDir('dist', 'drizzle'),
         },
         {
-          from: import.meta.dir + '/../drizzle/',
-          to: import.meta.dir + '/../dist/drizzle/',
+          from: projectDir('drizzle', 'meta'),
+          to: projectDir('dist', 'drizzle', 'meta'),
         },
       ],
     }),
