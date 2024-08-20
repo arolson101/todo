@@ -36,6 +36,7 @@ bun start
 - [x] shadcn/ui
 - [x] tanstack router
 - [x] trpc
-- [ ] tanstack form
-- [ ] drizzle
+- [x] env
+- [ ] database
 - [ ] auth
+- [ ] tanstack form
