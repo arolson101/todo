@@ -6,12 +6,7 @@ export const env = createEnv({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
     DATABASE_URL: z.string(),
-
     AUTH_SECRET: z.string().trim(),
-    AUTH_URL: z.string().trim().url().optional(),
-
-    GITHUB_ID: z.string(),
-    GITHUB_SECRET: z.string(),
   },
 
   /**
