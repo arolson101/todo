@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
+import { createTRPCContext } from './api/trpc'
 import { type Environment } from './env'
 
 const app = new Hono<Environment>()
@@ -14,6 +15,7 @@ app.use(
   trpcServer({
     endpoint: '/api/trpc',
     router: appRouter,
+    createContext: (_opts, c) => createTRPCContext(c),
   }),
 )
 

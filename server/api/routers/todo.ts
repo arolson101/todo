@@ -1,33 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+import { TodoId } from '@server/db/ids'
+import { Todo } from '@server/db/types'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
-
-export const TodoId = z.string().trim().min(1).max(64).brand('todo_id')
-export type TodoId = z.infer<typeof TodoId>
-
-export const Todo = z.object({
-  id: TodoId,
-  text: z.string().trim().min(3).max(100),
-  completed: z.boolean().optional().default(false),
-})
-export type Todo = z.infer<typeof Todo>
-
-const makeId = (n: number): TodoId => TodoId.parse(`${n}`)
-
-const todos: Todo[] = [
-  {
-    id: makeId(1),
-    text: 'First Todo',
-    completed: false,
-  },
-  {
-    id: makeId(2),
-    text: 'Second Todo',
-    completed: false,
-  },
-]
-
-const createTodoSchema = Todo.omit({ id: true })
 
 export const todoRouter = createTRPCRouter({
   hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
@@ -44,15 +19,18 @@ export const todoRouter = createTRPCRouter({
   all: publicProcedure //
     .input(z.void())
     .output(z.array(Todo))
-    .query(() => {
+    .query(async ({ ctx }) => {
+      const todos = await ctx.db.query.todos.findMany()
       return todos
     }),
 
   getTodo: publicProcedure //
     .input(z.object({ id: TodoId }))
     .output(Todo)
-    .query(({ input: { id } }) => {
-      const todo = todos.find((p) => p.id === id)
+    .query(async ({ ctx, input: { id } }) => {
+      const todo = await ctx.db.query.todos.findFirst({
+        where: (todos, { eq }) => eq(todos.id, id),
+      })
       if (!todo) {
         throw new TRPCError({ code: 'NOT_FOUND' })
       }

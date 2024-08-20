@@ -7,11 +7,11 @@
  * need to use are documented accordingly near the end.
  */
 import { initTRPC, TRPCError } from '@trpc/server'
+import type { Context } from 'hono'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
-
 // import { getServerAuthSession } from "~/server/auth";
-// import { db } from "~/server/db";
+import { db } from '@server/db/db'
 
 /**
  * 1. CONTEXT
@@ -25,13 +25,13 @@ import { ZodError } from 'zod'
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (c: Context) => {
   // const session = await getServerAuthSession();
 
   return {
-    // db,
+    ...c,
+    db,
     // session,
-    ...opts,
   }
 }
 
