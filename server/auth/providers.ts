@@ -1,11 +1,15 @@
 import type { Provider } from '@auth/core/providers'
 import Credentials from '@auth/core/providers/credentials'
+import Github from '@auth/core/providers/github'
+import Google from '@auth/core/providers/google'
 import Passkey from '@auth/core/providers/passkey'
-import { db } from '@server/db/db'
 import { credentialsSchema } from '@shared/models/credentials'
+import { db } from '@server/db/db'
 
 export const providers: Provider[] = [
   Passkey({ name: 'foo' }),
+  Github,
+  Google,
   Credentials({
     // You can specify which fields should be submitted, by adding keys to the `credentials` object.
     // e.g. domain, username, password, 2FA token, etc.
