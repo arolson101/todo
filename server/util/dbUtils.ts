@@ -1,4 +1,4 @@
-import { appName } from '@shared/identity'
+import { dbTablePrefix } from '@shared/identity'
 import type { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
 import {
   boolean,
@@ -13,7 +13,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import * as schema from '@server/db/schema'
 
-export const createTable: PgTableFn = pgTableCreator((name) => `${appName}_${name}`)
+export const createTable: PgTableFn = pgTableCreator((name) => `${dbTablePrefix}${name}`)
 
 export const _idNum = <T>(col: string) => serial(col).primaryKey().$type<T>()
 export const _idUUID = <T>(col: string) =>
