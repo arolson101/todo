@@ -1,19 +1,9 @@
 import { api } from '@/lib/api'
-import { createQueryClient } from '@/lib/query-client'
-import { type QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { getQueryClient } from '@/lib/query-client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { loggerLink, unstable_httpBatchStreamLink } from '@trpc/client'
 import { useState } from 'react'
 import SuperJSON from 'superjson'
-
-let clientQueryClientSingleton: QueryClient | undefined = undefined
-const getQueryClient = () => {
-  if (typeof window === 'undefined') {
-    // Server: always make a new query client
-    return createQueryClient()
-  }
-  // Browser: use singleton pattern to keep the same query client
-  return (clientQueryClientSingleton ??= createQueryClient())
-}
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()

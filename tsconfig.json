@@ -3,6 +3,8 @@
     /* path aliases */
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./app/*"],
+      "@shared/*": ["./shared/*"],
       "@server/*": ["./server/*"]
     },
   },

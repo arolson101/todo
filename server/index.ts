@@ -1,11 +1,14 @@
+import { authHandler } from '@hono/auth-js'
 import { trpcServer } from '@hono/trpc-server'
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
-import { authConfig, authHandler, verifyAuth } from './auth'
+import { authConfig } from './auth/config'
 import { type Environment } from './env'
+
+export { authHandler, verifyAuth } from '@hono/auth-js'
 
 const app = new Hono<Environment>()
 

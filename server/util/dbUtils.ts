@@ -1,3 +1,4 @@
+import { appName } from '@shared/identity'
 import type { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
 import {
   boolean,
@@ -12,10 +13,14 @@ import {
 } from 'drizzle-orm/pg-core'
 import * as schema from '@server/db/schema'
 
-export const createTable: PgTableFn = pgTableCreator((name) => `todo_${name}`)
+export const createTable: PgTableFn = pgTableCreator((name) => `${appName}_${name}`)
 
 export const _idNum = <T>(col: string) => serial(col).primaryKey().$type<T>()
-export const _idUUID = <T>(col: string) => text(col).primaryKey().$type<T>().$defaultFn(() => crypto.randomUUID() as T)
+export const _idUUID = <T>(col: string) =>
+  text(col)
+    .primaryKey()
+    .$type<T>()
+    .$defaultFn(() => crypto.randomUUID() as T)
 export const _int = (col: string) => integer(col).notNull().default(0)
 export const _text = (col: string) => text(col).notNull().default('')
 export const _bool = (col: string, dflt: boolean) => boolean(col).notNull().default(dflt)

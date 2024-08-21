@@ -1,8 +1,10 @@
+import { useHref } from '@/lib/use-href'
 import { useSession } from '@hono/auth-js/react'
 import { Link } from '@tanstack/react-router'
 
 export const Nav = () => {
   const { status } = useSession()
+  const callbackUrl = useHref()
 
   return (
     <>
@@ -16,16 +18,14 @@ export const Nav = () => {
         <Link to='/todos' className='[&.active]:font-bold'>
           Todos
         </Link>
-        {status === 'loading' ? (
-          ' '
-        ) : status === 'authenticated' ? (
+        {status === 'authenticated' ? (
           <a href='/api/auth/signout' className='[&.active]:font-bold'>
             Sign Out
           </a>
         ) : (
-          <a href='/api/auth/signin' className='[&.active]:font-bold'>
+          <Link to='/signin' search={{ callbackUrl }} className='[&.active]:font-bold'>
             Sign In
-          </a>
+          </Link>
         )}
       </div>
     </>
