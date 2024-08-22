@@ -8,6 +8,8 @@ body,
   @apply h-full;
 }
 
+/* https://gradient.page/tools/shadcn-ui-theme-generator */
+
 @layer base {
   :root {
     /* Name: custom color palette
