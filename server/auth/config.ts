@@ -6,8 +6,8 @@ import * as tables from '@server/db/schema/auth'
 import type { Environment } from '@server/env'
 import { providers } from './providers'
 
-function getAuthConfig(c: Context<Environment>): AuthConfig {
-  return {
+const getAuthConfig = (c: Context<Environment>) =>
+  ({
     adapter: DrizzleAdapter(db, {
       usersTable: tables.users,
       accountsTable: tables.accounts,
@@ -21,7 +21,7 @@ function getAuthConfig(c: Context<Environment>): AuthConfig {
     pages: {
       signIn: '/signin',
     },
-  }
-}
+    debug: c.env.NODE_ENV === 'development',
+  }) satisfies AuthConfig
 
 export const authConfig = initAuthConfig(getAuthConfig)
