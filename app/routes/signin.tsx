@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { queryLoader } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -40,104 +41,156 @@ export const Route = createFileRoute('/signin')({
   ),
 })
 
+const formSchema = credentialsSchema //
+  .extend({ confirm: z.string() })
+  .refine(
+    ({ password, confirm }) => password === confirm, //
+    { message: 'Passwords must match', path: ['confirm'] },
+  )
+
 function SignInPage() {
   const { callbackUrl } = Route.useSearch()
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
   const providers = Object.values(providerMap)
 
-  console.log({ data })
-
-  const form = useForm<z.infer<typeof credentialsSchema>>({
-    resolver: zodResolver(credentialsSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirm: '',
+      register: false,
+    },
   })
 
   const hasCredentialsProvider = !!credentialsProvider
   const divider = hasCredentialsProvider && !!providers.length
 
-  async function onSubmit(values: z.infer<typeof credentialsSchema>) {
+  async function onSubmit({ confirm, ...values }: z.infer<typeof formSchema>) {
     const res = await signIn(credentialsProvider.id, { callbackUrl, redirect: true }, values)
     console.log(`signIn(${credentialsProvider.id})`, values, res)
   }
 
+  const register = form.watch('register')
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-        <Card className='m-auto max-w-96'>
-          <CardHeader className='space-y-1'>
-            <CardTitle className='text-2xl'>
-              <img src={appLogo} className='m-auto w-52 p-8' />
-              Sign In
-            </CardTitle>
-          </CardHeader>
-          <CardContent className='grid gap-4'>
-            <CardDescription>
-              {providers.length === 1 ? `Sign in with ${providers[0].name}` : 'Sign in with your provider'}
-            </CardDescription>
-            <div
-              className={cn('grid gap-6', {
-                'grid-cols-2': providers.length > 1,
-              })}
-            >
-              {providers.map((provider) => (
-                <ProviderButton key={provider.name} provider={provider} className='grow' callbackUrl={callbackUrl} />
-              ))}
-            </div>
-
-            {divider && (
-              <div className='relative'>
-                <div className='absolute inset-0 flex items-center'>
-                  <span className='w-full border-t' />
+    <div className='flex h-full'>
+      <Tabs
+        className='m-auto w-full max-w-[400px]'
+        onValueChange={() => form.setValue('register', !register)}
+        value={register ? 'register' : 'signin'}
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <Card className='m-auto'>
+              <CardHeader className='space-y-1'>
+                <CardTitle className='text-2xl'>
+                  <img src={appLogo} className='m-auto w-52 p-8' />
+                  Sign In
+                </CardTitle>
+              </CardHeader>
+              <CardContent className='grid gap-4'>
+                <CardDescription>
+                  {providers.length === 1 ? `Sign in with ${providers[0].name}` : 'Sign in with your provider'}
+                </CardDescription>
+                <div
+                  className={cn('grid gap-6', {
+                    'grid-cols-2': providers.length > 1,
+                  })}
+                >
+                  {providers.map((provider) => (
+                    <ProviderButton
+                      key={provider.name}
+                      provider={provider}
+                      className='grow'
+                      callbackUrl={callbackUrl}
+                    />
+                  ))}
                 </div>
-                <div className='relative flex justify-center text-xs uppercase'>
-                  <span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
-                </div>
-              </div>
-            )}
 
-            {hasCredentialsProvider && (
-              <>
-                <FormField
-                  control={form.control}
-                  name='email'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder='name@example.com' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {divider && (
+                  <div className='relative'>
+                    <div className='absolute inset-0 flex items-center'>
+                      <span className='w-full border-t' />
+                    </div>
+                    <div className='relative flex justify-center text-xs uppercase'>
+                      <span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
+                    </div>
+                  </div>
+                )}
 
-                <FormField
-                  control={form.control}
-                  name='password'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type='password' {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
-            )}
-          </CardContent>
+                {hasCredentialsProvider && (
+                  <>
+                    <TabsList className='w-full'>
+                      <TabsTrigger value='signin' className='w-full'>
+                        Sign In
+                      </TabsTrigger>
+                      <TabsTrigger value='register' className='w-full'>
+                        Register
+                      </TabsTrigger>
+                    </TabsList>
 
-          {hasCredentialsProvider && (
-            <CardFooter>
-              <Button type='submit' className='w-full'>
-                Sign In
-              </Button>
-            </CardFooter>
-          )}
-        </Card>
-      </form>
-    </Form>
+                    <FormField
+                      control={form.control}
+                      name='email'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder='name@example.com' {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='password'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type='password' {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <TabsContent value='register'>
+                      <FormField
+                        control={form.control}
+                        name='confirm'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Confirm Password</FormLabel>
+                            <FormControl>
+                              <Input type='password' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TabsContent>
+                  </>
+                )}
+              </CardContent>
+
+              {hasCredentialsProvider && (
+                <CardFooter>
+                  <Button type='submit' className='w-full'>
+                    <TabsContent value='signin'>Sign In</TabsContent>
+                    <TabsContent value='register'>Register</TabsContent>
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
+          </form>
+        </Form>
+      </Tabs>
+    </div>
   )
 }
 
@@ -150,10 +203,8 @@ function ProviderButton({
   provider: ClientSafeProvider
   callbackUrl?: string
 }) {
-  async function click() {
-    console.log(`sign in using ${provider.name}`)
-    const res = await signIn(provider.id, { callbackUrl })
-    console.log(`signIn(${provider.id})`, res)
+  function click() {
+    signIn(provider.id, { callbackUrl })
   }
 
   const Icon = match(provider.id)

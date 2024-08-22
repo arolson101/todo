@@ -19,8 +19,8 @@ function getAuthConfig(c: Context<Environment>): AuthConfig {
     providers,
     experimental: { enableWebAuthn: true },
     pages: {
-      signIn: '/signin'
-    }
+      signIn: '/signin',
+    },
   }
 }
 
