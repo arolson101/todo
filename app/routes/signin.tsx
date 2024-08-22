@@ -4,36 +4,29 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { queryLoader } from '@/lib/query-client'
 import { cn } from '@/lib/utils'
-import { BuiltInProviderType, CredentialsConfig, OAuthProviderType } from '@auth/core/providers'
-import { WebAuthnConfig } from '@auth/core/providers/webauthn'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { appLogo } from '@shared/identity'
 import { credentialsSchema } from '@shared/models/credentials'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { zodSearchValidator } from '@tanstack/router-zod-adapter'
+import { getProviders, signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { FaGithub, FaGoogle } from 'react-icons/fa'
+import { GoPasskeyFill } from 'react-icons/go'
 import { match } from 'ts-pattern'
 import { z } from 'zod'
 
-interface Provider {
-  id: string
-  name: string
-  callbackUrl: string
-  signinUrl: string
-  type: BuiltInProviderType
-}
+type ClientSafeProvider = NonNullable<Awaited<ReturnType<typeof getProviders>>>[string]
 
 const providersQuery = queryOptions({
-  queryKey: ['posts'],
+  queryKey: ['auth-providers'],
   queryFn: async () => {
-    const res = await fetch('/api/auth/providers')
-    const data: Record<OAuthProviderType, Provider> & {
-      credentials?: CredentialsConfig
-      passkey?: WebAuthnConfig
-    } = await res.json()
-    return data
+    const providers = await getProviders()
+    if (!providers) {
+      throw new Error('failed to get providers')
+    }
+    return providers
   },
 })
 
@@ -47,9 +40,10 @@ export const Route = createFileRoute('/signin')({
   ),
 })
 
-export function SignInPage() {
+function SignInPage() {
+  const { callbackUrl } = Route.useSearch()
   const { data } = useSuspenseQuery(providersQuery)
-  const { credentials: credentialsProvider, passkey: passkeyProvider, ...providerMap } = data
+  const { credentials: credentialsProvider, ...providerMap } = data ?? {}
   const providers = Object.values(providerMap)
 
   console.log({ data })
@@ -62,9 +56,8 @@ export function SignInPage() {
   const divider = hasCredentialsProvider && !!providers.length
 
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    const res = await signIn(credentialsProvider.id, { callbackUrl, redirect: true }, values)
+    console.log(`signIn(${credentialsProvider.id})`, values, res)
   }
 
   return (
@@ -82,13 +75,12 @@ export function SignInPage() {
               {providers.length === 1 ? `Sign in with ${providers[0].name}` : 'Sign in with your provider'}
             </CardDescription>
             <div
-              className={cn('flex flex-row gap-6', {
-                'grid-cols-2': providers.length % 3 === 0,
-                'grid-cols-3': providers.length % 2 === 0,
+              className={cn('grid gap-6', {
+                'grid-cols-2': providers.length > 1,
               })}
             >
               {providers.map((provider) => (
-                <ProviderButton key={provider.name} provider={provider} className='grow' />
+                <ProviderButton key={provider.name} provider={provider} className='grow' callbackUrl={callbackUrl} />
               ))}
             </div>
 
@@ -149,19 +141,32 @@ export function SignInPage() {
   )
 }
 
-function ProviderButton({ className, provider }: { className?: string; provider: Provider }) {
-  function signin() {
+function ProviderButton({
+  className,
+  provider,
+  callbackUrl,
+}: {
+  className?: string
+  provider: ClientSafeProvider
+  callbackUrl?: string
+}) {
+  async function click() {
     console.log(`sign in using ${provider.name}`)
-    // window.location.href = provider.signinUrl
+    const res = await signIn(provider.id, { callbackUrl })
+    console.log(`signIn(${provider.id})`, res)
   }
 
   const Icon = match(provider.id)
     .with('github', () => FaGithub)
     .with('google', () => FaGoogle)
-    .otherwise(() => null)
+    .with('passkey', () => GoPasskeyFill)
+    .otherwise((id) => {
+      console.log(`unhandled icon for type '${id}'`)
+      return null
+    })
 
   return (
-    <Button type='button' variant='outline' className={className} onClick={signin}>
+    <Button type='button' variant='outline' className={className} onClick={click}>
       {Icon && <Icon className='mr-2 h-4 w-4' />}
       {provider.name}
     </Button>

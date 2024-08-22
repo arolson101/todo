@@ -7,7 +7,7 @@ import { credentialsSchema } from '@shared/models/credentials'
 import { db } from '@server/db/db'
 
 export const providers: Provider[] = [
-  Passkey({ name: 'foo' }),
+  // Passkey({ name: 'Passkey' }),
   Github,
   Google,
   Credentials({

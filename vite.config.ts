@@ -7,6 +7,11 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tsconfigPaths(), TanStackRouterVite(), react(), sri()],
+  define: {
+    process: {
+      env: {},
+    },
+  },
   build: {
     outDir: './dist/public',
     emptyOutDir: true,
