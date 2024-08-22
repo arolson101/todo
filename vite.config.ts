@@ -6,7 +6,16 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), TanStackRouterVite(), react(), sri()],
+  plugins: [
+    tsconfigPaths(),
+    TanStackRouterVite(),
+    react({
+      babel: {
+        plugins: ['babel-plugin-react-compiler'],
+      },
+    }),
+    sri(),
+  ],
   define: {
     process: {
       env: {},
