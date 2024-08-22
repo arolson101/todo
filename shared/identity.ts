@@ -6,7 +6,7 @@ export const appDisplayName = 'Todo App'
  * It’s very useful when you need to keep schemas of different projects in one database.
  * https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const dbTablePrefix = `${appName}`
+export const dbTablePrefix = `${appName}_`
 
 /**
  * Application logo
