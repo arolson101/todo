@@ -6,13 +6,15 @@ import { logger } from 'hono/logger'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
 import { authConfig } from './auth/config'
-import { type Environment } from './env'
+import { env, type Environment } from './env'
 
 export { authHandler, verifyAuth } from '@hono/auth-js'
 
 const app = new Hono<Environment>()
 
-app.use('*', logger())
+if (env.NODE_ENV === 'development') {
+  app.use('*', logger())
+}
 
 app.use('*', authConfig)
 app.use('/api/auth/*', authHandler())
