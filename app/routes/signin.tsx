@@ -65,7 +65,7 @@ function SignInPage() {
   }
 
   return (
-    <div className='m-auto w-full max-w-[400px]'>
+    <div className='m-auto mt-24 w-full max-w-[400px]'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
           <Card className='m-auto'>

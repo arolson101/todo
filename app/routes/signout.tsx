@@ -23,7 +23,7 @@ function SignOutPage() {
   }
 
   return (
-    <div className='m-auto w-full max-w-[400px]'>
+    <div className='m-auto mt-24 w-full max-w-[400px]'>
       <Card className='m-auto'>
         <CardHeader className='space-y-1'>
           <CardTitle className='text-2xl'>
