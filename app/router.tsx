@@ -1,18 +1,14 @@
-import { Spinner } from '@/components/ui/spinner'
 import { AppRouter, getTrpcLinks } from '@/lib/trpc'
 import { createRouter } from '@tanstack/react-router'
 import { createTRPCClient } from '@trpc/client'
+import { RouterPending } from './components/ui/router-pending'
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
 export const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
-  defaultPendingComponent: () => (
-    <div className={`p-2 text-2xl`}>
-      <Spinner />
-    </div>
-  ),
+  defaultPendingComponent: RouterPending,
   context: {
     trpc: createTRPCClient<AppRouter>({
       links: getTrpcLinks(),
