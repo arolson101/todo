@@ -3,19 +3,19 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build": "concurrently \"bun build:server\" \"bun build:client\"",
-    "build:client": "bunx --bun vite build",
-    "build:server": "cross-env NODE_ENV=production bun run scripts/build.ts",
+    "build": "concurrently bun:build:*",
+    "build:hono": "cross-env NODE_ENV=production bun run scripts/build.ts",
+    "build:vite": "bunx --bun vite build",
     "db:dump": "bun run ./scripts/dump.ts",
     "db:migrations": "bunx drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:seed": "bun run ./scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "dev": "concurrently \"bun dev:client\" \"bun dev:server\"",
-    "dev:client": "bunx --bun vite",
-    "dev:server": "bun --watch server/index.ts",
+    "dev": "concurrently bun:dev:*",
+    "dev:hono": "bun --watch server/hono.ts",
+    "dev:vite": "bunx --bun vite",
     "format": "prettier --write .",
-    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run index.js"
+    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",

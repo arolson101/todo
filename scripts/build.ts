@@ -4,7 +4,7 @@ import path from 'path'
 const projectDir = (...paths: string[]) => path.join(import.meta.dir, '..', ...paths).replaceAll('\\', '/') + '/'
 
 await Bun.build({
-  entrypoints: ['./server/index.ts'],
+  entrypoints: ['./server/hono.ts'],
   target: 'bun',
   external: [],
   outdir: './dist',
