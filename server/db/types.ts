@@ -1,6 +1,6 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
-import type { InferResultType } from '@server/util/dbUtils'
+import type { InferResultType } from '~server/util/dbUtils'
 import { TodoId, UserId } from './ids'
 import * as schema from './schema'
 

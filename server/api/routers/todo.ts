@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { TodoId } from '@server/db/ids'
-import { Todo } from '@server/db/types'
+import { TodoId } from '~server/db/ids'
+import { Todo } from '~server/db/types'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 export const todoRouter = createTRPCRouter({

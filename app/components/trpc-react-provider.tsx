@@ -1,8 +1,8 @@
-import { getQueryClient } from '@/lib/query-client'
-import { api } from '@/lib/trpc'
-import { getTrpcLinks } from '@/lib/trpc'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
+import { getQueryClient } from '~/lib/query-client'
+import { api } from '~/lib/trpc'
+import { getTrpcLinks } from '~/lib/trpc'
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient()

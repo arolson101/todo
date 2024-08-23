@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { conn, db } from '@server/db/db'
-import { todos, users } from '@server/db/schema'
+import { conn, db } from '~server/db/db'
+import { todos, users } from '~server/db/schema'
 
 async function main() {
   console.log('Seeding database...')

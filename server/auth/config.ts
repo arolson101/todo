@@ -1,9 +1,9 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { type AuthConfig, initAuthConfig } from '@hono/auth-js'
 import { type Context } from 'hono'
-import { db } from '@server/db/db'
-import * as tables from '@server/db/schema/auth'
-import type { Environment } from '@server/env'
+import { db } from '~server/db/db'
+import * as tables from '~server/db/schema/auth'
+import type { Environment } from '~server/env'
 import { providers } from './providers'
 
 const getAuthConfig = (c: Context<Environment>) =>

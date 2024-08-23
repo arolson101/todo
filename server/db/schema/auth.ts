@@ -1,11 +1,13 @@
 import type { AdapterAccountType } from '@auth/core/adapters'
 import { boolean, integer, primaryKey, text, timestamp } from 'drizzle-orm/pg-core'
-import { createTable } from '@server/util/dbUtils'
+import { createTable } from '~server/util/dbUtils'
+import type { UserId } from '../ids'
 
 export const users = createTable('user', {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => crypto.randomUUID())
+    .$type<UserId>(),
   name: text('name'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),

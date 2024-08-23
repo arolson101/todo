@@ -11,7 +11,7 @@ import type { Context } from 'hono'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
 // import { getServerAuthSession } from "~/server/auth";
-import { db } from '@server/db/db'
+import { db } from '~server/db/db'
 
 /**
  * 1. CONTEXT

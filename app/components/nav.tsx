@@ -1,6 +1,6 @@
-import { useHref } from '@/lib/use-href'
 import { useSession } from '@hono/auth-js/react'
 import { Link } from '@tanstack/react-router'
+import { useHref } from '~/lib/use-href'
 
 export const Nav = () => {
   const { status } = useSession()

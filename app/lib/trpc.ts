@@ -1,7 +1,7 @@
 import { createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
-import type { AppRouter } from '@server/api'
+import type { AppRouter } from '~server/api'
 
 export { AppRouter }
 

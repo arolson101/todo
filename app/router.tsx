@@ -1,6 +1,6 @@
-import { AppRouter, getTrpcLinks } from '@/lib/trpc'
 import { createRouter } from '@tanstack/react-router'
 import { createTRPCClient } from '@trpc/client'
+import { AppRouter, getTrpcLinks } from '~/lib/trpc'
 import { RouterPending } from './components/ui/router-pending'
 import { routeTree } from './routeTree.gen'
 

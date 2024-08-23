@@ -1,4 +1,3 @@
-import { dbTablePrefix } from '@shared/identity'
 import type { BuildQueryResult, DBQueryConfig, ExtractTablesWithRelations } from 'drizzle-orm'
 import {
   boolean,
@@ -11,7 +10,8 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
-import * as schema from '@server/db/schema'
+import * as schema from '~server/db/schema'
+import { dbTablePrefix } from '~shared/identity'
 
 export const createTable: PgTableFn = pgTableCreator((name) => `${dbTablePrefix}${name}`)
 

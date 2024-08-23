@@ -1,5 +1,5 @@
 import { execute } from '@getvim/execute'
-import { env } from '@server/env'
+import { env } from '~server/env'
 
 async function main() {
   const url = new URL(env.DATABASE_URL)

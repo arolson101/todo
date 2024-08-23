@@ -3,8 +3,8 @@ import Credentials from '@auth/core/providers/credentials'
 import Github from '@auth/core/providers/github'
 import Google from '@auth/core/providers/google'
 import Passkey from '@auth/core/providers/passkey'
-import { credentialsSchema } from '@shared/models/credentials'
-import { db } from '@server/db/db'
+import { db } from '~server/db/db'
+import { credentialsSchema } from '~shared/models/credentials'
 
 export const providers: Provider[] = [
   // Passkey({ name: 'Passkey' }),

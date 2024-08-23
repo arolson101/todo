@@ -6,7 +6,7 @@ const config = {
     'prettier-plugin-tailwindcss', // MUST come last
   ],
   importOrder: [
-    'server-only',
+    'server-only', //
     '^@core/(.*)$',
     '<THIRD_PARTY_MODULES>',
     '^@server/(.*)$',

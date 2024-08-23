@@ -3,10 +3,10 @@
     /* path aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./app/*"],
-      "@shared/*": ["./shared/*"],
-      "@server/*": ["./server/*"]
-    },
+      "~/*": ["./app/*"],
+      "~shared/*": ["./shared/*"],
+      "~server/*": ["./server/*"]
+    }
   },
   "files": [],
   "references": [

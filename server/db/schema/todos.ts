@@ -1,7 +1,7 @@
 import { index } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm/relations'
-import type { TodoId, UserId } from '@server/db/ids'
-import { _bool, _idNum, _idUUID, _refidUUID, _text, _timestamp, createTable } from '@server/util/dbUtils'
+import type { TodoId, UserId } from '~server/db/ids'
+import { _bool, _idNum, _idUUID, _refidUUID, _text, _timestamp, createTable } from '~server/util/dbUtils'
 import { users } from './auth'
 
 export const todos = createTable(
