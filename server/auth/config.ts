@@ -20,6 +20,7 @@ const getAuthConfig = (c: Context<Environment>) =>
     experimental: { enableWebAuthn: true },
     pages: {
       signIn: '/signin',
+      signOut: '/signout',
     },
     debug: c.env.NODE_ENV === 'development',
   }) satisfies AuthConfig

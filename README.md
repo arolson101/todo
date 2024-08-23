@@ -73,8 +73,8 @@ bun start
 - [x] trpc
 - [x] env
 - [x] database
-- [ ] auth
-- [ ] signin/signup/signout pages
+- [x] auth
+- [x] signin/signout pages
 - [ ] fix server startup/db migrations
 - [ ] first time setup
 - [ ] localization
