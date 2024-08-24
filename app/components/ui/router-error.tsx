@@ -4,10 +4,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 export const RouterError: ErrorRouteComponent = ({ error, reset, info }) => {
   const nav = useNavigate()
-  const goBack = () => {
+
+  function onGoHome() {
     reset?.()
     nav({ to: '/' })
   }
+
   return (
     <div className='m-auto mt-24'>
       <Card>
@@ -20,7 +22,7 @@ export const RouterError: ErrorRouteComponent = ({ error, reset, info }) => {
           {info && <pre>{info.componentStack}</pre>}
         </CardContent>
         <CardFooter>
-          <Button onClick={goBack}>Go Home</Button>
+          <Button onClick={onGoHome}>Go Home</Button>
         </CardFooter>
       </Card>
     </div>

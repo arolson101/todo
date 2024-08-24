@@ -6,7 +6,7 @@ export const Route = createFileRoute('/about')({
 })
 
 function About() {
-  const { data: session, status } = useSession() || {}
+  const { data: session, status } = useSession()
 
   return (
     <>

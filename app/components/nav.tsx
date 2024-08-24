@@ -1,9 +1,9 @@
-import { useSession } from '@hono/auth-js/react'
 import { Link } from '@tanstack/react-router'
+import { useSession } from 'next-auth/react'
 import { useHref } from '~/lib/use-href'
 
 export const Nav = () => {
-  const { status } = useSession() ?? {}
+  const { status } = useSession()
   const callbackUrl = useHref()
 
   return (

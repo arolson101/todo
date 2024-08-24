@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodSearchValidator } from '@tanstack/router-zod-adapter'
 import { getProviders, signIn, signOut, useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -43,6 +43,7 @@ export const Route = createFileRoute('/signin')({
 
 function SignInPage() {
   const { callbackUrl } = Route.useSearch()
+  const nav = useNavigate()
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
   const providers = Object.values(providerMap)
@@ -56,14 +57,22 @@ function SignInPage() {
     },
   })
 
-  const signedIn = !!useSession()
+  const { status } = useSession()
+  const signedIn = status === 'authenticated'
 
   const hasCredentialsProvider = !!credentialsProvider && !signedIn
   const divider = hasCredentialsProvider && !!providers.length && !signedIn
 
+  function providerSignIn(id: string) {
+    signIn(id, { callbackUrl })
+  }
+
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
-    const res = await signIn(credentialsProvider?.id, { callbackUrl, redirect: true }, values)
+    const res = await signIn(credentialsProvider?.id, { redirect: false }, values)
     console.log(`signIn(${credentialsProvider?.id})`, values, res)
+    if (res?.ok) {
+      nav({ to: callbackUrl ?? '/' })
+    }
   }
 
   function onSignOut() {
@@ -96,12 +105,7 @@ function SignInPage() {
               >
                 {!signedIn &&
                   providers.map((provider) => (
-                    <ProviderButton
-                      key={provider.name}
-                      provider={provider}
-                      className='grow'
-                      callbackUrl={callbackUrl}
-                    />
+                    <ProviderButton key={provider.name} provider={provider} className='grow' onClick={providerSignIn} />
                   ))}
               </div>
 
@@ -172,11 +176,9 @@ function SignInPage() {
               )}
               {signedIn && (
                 <>
-                <Button type='button' className='w-full' asChild>
-                  <a href='/'>
-                  Return Home
-                  </a>
-                </Button>
+                  <Button type='button' className='w-full' asChild>
+                    <a href='/'>Return Home</a>
+                  </Button>
                   <Button type='button' variant='destructive' className='w-full' onClick={onSignOut}>
                     Sign Out
                   </Button>
@@ -193,16 +195,12 @@ function SignInPage() {
 function ProviderButton({
   className,
   provider,
-  callbackUrl,
+  onClick,
 }: {
   className?: string
   provider: ClientSafeProvider
-  callbackUrl?: string
+  onClick: (provider: string) => void
 }) {
-  function click() {
-    signIn(provider.id, { callbackUrl })
-  }
-
   const Icon = match(provider.id)
     .with('github', () => FaGithub)
     .with('google', () => FaGoogle)
@@ -213,7 +211,7 @@ function ProviderButton({
     })
 
   return (
-    <Button type='button' variant='outline' className={className} onClick={click}>
+    <Button type='button' variant='outline' className={className} onClick={() => onClick(provider.id)}>
       {Icon && <Icon className='mr-2 h-4 w-4' />}
       {provider.name}
     </Button>

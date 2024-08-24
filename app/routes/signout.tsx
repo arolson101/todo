@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodSearchValidator } from '@tanstack/router-zod-adapter'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
@@ -16,11 +17,20 @@ export const Route = createFileRoute('/signout')({
 })
 
 function SignOutPage() {
-  const { callbackUrl } = Route.useSearch()
+  const nav = useNavigate()
+  const [wasSignedOut, setWasSignedOut] = useState(false)
 
-  function onSignOut() {
-    signOut({ callbackUrl, redirect: Boolean(callbackUrl) })
+  function onGoHome() {
+    nav({ to: '/' })
   }
+
+  async function onSignOut() {
+    await signOut({ redirect: false })
+    setWasSignedOut(true)
+  }
+
+  const { status } = useSession()
+  const signedIn = status === 'authenticated'
 
   return (
     <div className='m-auto mt-24 w-full max-w-[400px]'>
@@ -33,13 +43,25 @@ function SignOutPage() {
         </CardHeader>
 
         <CardContent className='grid gap-4'>
-          <CardDescription>Are you sure you want to sign out?</CardDescription>
+          <CardDescription>
+            {signedIn
+              ? 'Are you sure you want to sign out?'
+              : wasSignedOut
+                ? 'You have been signed out'
+                : 'You not signed in'}
+          </CardDescription>
         </CardContent>
 
         <CardFooter>
-          <Button type='button' variant='destructive' onClick={onSignOut} className='w-full'>
-            Sign Out
-          </Button>
+          {signedIn ? (
+            <Button type='button' variant='destructive' onClick={onSignOut} className='w-full'>
+              Sign Out
+            </Button>
+          ) : (
+            <Button onClick={onGoHome} className='w-full'>
+              Go Home
+            </Button>
+          )}
         </CardFooter>
       </Card>
     </div>
