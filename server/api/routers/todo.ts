@@ -16,15 +16,18 @@ export const todoRouter = createTRPCRouter({
       return 'you can now see this secret message!'
     }),
 
-  all: publicProcedure //
+  all: protectedProcedure //
     .input(z.void())
     .output(z.array(Todo))
     .query(async ({ ctx }) => {
-      const todos = await ctx.db.query.todos.findMany()
+      const todos = await ctx.db.query.todos //
+        .findMany({
+          where: (todo, { eq }) => eq(todo.userId, ctx.session.user.id),
+        })
       return todos
     }),
 
-  getTodo: publicProcedure //
+  getTodo: protectedProcedure //
     .input(z.object({ id: TodoId }))
     .output(Todo)
     .query(async ({ ctx, input: { id } }) => {
