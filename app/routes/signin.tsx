@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { zodSearchValidator } from '@tanstack/router-zod-adapter'
-import { getProviders, signIn } from 'next-auth/react'
+import { getProviders, signIn, signOut, useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { FaGithub, FaGoogle } from 'react-icons/fa'
 import { GoPasskeyFill } from 'react-icons/go'
@@ -56,12 +56,18 @@ function SignInPage() {
     },
   })
 
-  const hasCredentialsProvider = !!credentialsProvider
-  const divider = hasCredentialsProvider && !!providers.length
+  const signedIn = !!useSession()
+
+  const hasCredentialsProvider = !!credentialsProvider && !signedIn
+  const divider = hasCredentialsProvider && !!providers.length && !signedIn
 
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
-    const res = await signIn(credentialsProvider.id, { callbackUrl, redirect: true }, values)
-    console.log(`signIn(${credentialsProvider.id})`, values, res)
+    const res = await signIn(credentialsProvider?.id, { callbackUrl, redirect: true }, values)
+    console.log(`signIn(${credentialsProvider?.id})`, values, res)
+  }
+
+  function onSignOut() {
+    signOut({ callbackUrl, redirect: Boolean(callbackUrl) })
   }
 
   return (
@@ -77,16 +83,26 @@ function SignInPage() {
             </CardHeader>
             <CardContent className='grid gap-4'>
               <CardDescription>
-                {providers.length === 1 ? `Sign in with ${providers[0].name}` : 'Sign in with your provider'}
+                {signedIn
+                  ? "You're already signed in- do you want to sign out?"
+                  : providers.length === 1
+                    ? `Sign in with ${providers[0].name}`
+                    : 'Sign in with your provider'}
               </CardDescription>
               <div
                 className={cn('grid gap-6', {
                   'grid-cols-2': providers.length > 1,
                 })}
               >
-                {providers.map((provider) => (
-                  <ProviderButton key={provider.name} provider={provider} className='grow' callbackUrl={callbackUrl} />
-                ))}
+                {!signedIn &&
+                  providers.map((provider) => (
+                    <ProviderButton
+                      key={provider.name}
+                      provider={provider}
+                      className='grow'
+                      callbackUrl={callbackUrl}
+                    />
+                  ))}
               </div>
 
               {divider && (
@@ -148,13 +164,25 @@ function SignInPage() {
               )}
             </CardContent>
 
-            {hasCredentialsProvider && (
-              <CardFooter>
+            <CardFooter className='flex flex-col gap-4'>
+              {hasCredentialsProvider && (
                 <Button type='submit' className='w-full'>
                   Sign In
                 </Button>
-              </CardFooter>
-            )}
+              )}
+              {signedIn && (
+                <>
+                <Button type='button' className='w-full' asChild>
+                  <a href='/'>
+                  Return Home
+                  </a>
+                </Button>
+                  <Button type='button' variant='destructive' className='w-full' onClick={onSignOut}>
+                    Sign Out
+                  </Button>
+                </>
+              )}
+            </CardFooter>
           </Card>
         </form>
       </Form>

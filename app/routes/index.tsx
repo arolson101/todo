@@ -1,13 +1,27 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useSession } from 'next-auth/react'
 
 export const Route = createFileRoute('/')({
   component: Index,
 })
 
 function Index() {
-  return (
-    <div className='p-2'>
-      <h3>Welcome Home!</h3>
-    </div>
-  )
+  const session = useSession()
+
+  if (session.data) {
+    return (
+      <div className='p-2'>
+        <h3>Welcome Home!</h3>
+      </div>
+    )
+  } else {
+    return (
+      <div className='p-2'>
+        <h3>Welcome Home!</h3>
+        <p>
+          <a href='/signin'>Sign In</a>
+        </p>
+      </div>
+    )
+  }
 }

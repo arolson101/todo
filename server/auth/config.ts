@@ -15,6 +15,7 @@ const getAuthConfig = (c: Context<Environment>) =>
       verificationTokensTable: tables.verificationTokens,
       authenticatorsTable: tables.authenticators,
     }),
+    redirectProxyUrl: c.env.AUTH_URL,
     secret: c.env.AUTH_SECRET,
     providers,
     experimental: { enableWebAuthn: true },
@@ -22,7 +23,7 @@ const getAuthConfig = (c: Context<Environment>) =>
       signIn: '/signin',
       signOut: '/signout',
     },
-    debug: c.env.NODE_ENV === 'development',
+    // debug: c.env.NODE_ENV === 'development',
   }) satisfies AuthConfig
 
 export const authConfig = initAuthConfig(getAuthConfig)

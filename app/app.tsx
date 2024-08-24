@@ -1,5 +1,5 @@
-import { SessionProvider } from '@hono/auth-js/react'
 import { RouterProvider } from '@tanstack/react-router'
+import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from '~/components/theme-provider'
 import { TRPCReactProvider } from '~/components/trpc-react-provider'
 import './app.css'

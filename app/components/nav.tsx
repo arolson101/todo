@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { useHref } from '~/lib/use-href'
 
 export const Nav = () => {
-  const { status } = useSession()
+  const { status } = useSession() ?? {}
   const callbackUrl = useHref()
 
   return (

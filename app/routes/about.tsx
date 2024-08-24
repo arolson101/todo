@@ -1,12 +1,12 @@
-import { useSession } from '@hono/auth-js/react'
 import { createFileRoute } from '@tanstack/react-router'
+import { useSession } from 'next-auth/react'
 
 export const Route = createFileRoute('/about')({
   component: About,
 })
 
 function About() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession() || {}
 
   return (
     <>

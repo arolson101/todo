@@ -6,6 +6,7 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
+import { getAuthUser } from '@hono/auth-js'
 import { initTRPC, TRPCError } from '@trpc/server'
 import type { Context } from 'hono'
 import superjson from 'superjson'
@@ -26,13 +27,12 @@ import type { UserId } from '~server/db/ids'
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (c: Context) => {
-  const { session } = c.get('authUser')
-  console.log({ session })
+  const authUser = (await getAuthUser(c))
 
   return {
     ...c,
     db,
-    session,
+    session: authUser?.session,
   }
 }
 
