@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { signOut, useSession } from 'next-auth/react'
+import { AppLogo } from '~/components/ui/app-logo'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
-import { AppLogo } from '~shared/identity'
 
 export const Route = createFileRoute('/signout')({
   component: SignOutPage,

@@ -1,6 +1,8 @@
 export const appName = 'todo'
 export const appDisplayName = 'Todo App'
 
+export const htmlTitle = appDisplayName
+
 /**
  * Prefix of table names
  * It’s very useful when you need to keep schemas of different projects in one database.
@@ -13,7 +15,11 @@ export const dbTablePrefix = `${appName}_`
  * (in public folder)
  * Shown on login page, etc
  */
-export const AppLogo = ({ className, width }: { className?: string; width: number }) => {
+export const appLogoImgProps = (width: number) => {
   const [w, h] = [71, 55]
-  return <img src='logoipsum-331.svg' width={width} height={(width * h) / w} className={className} />
+  return {
+    src: 'logoipsum-331.svg',
+    width,
+    height: (width * h) / w,
+  }
 }
