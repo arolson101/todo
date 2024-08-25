@@ -1,10 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { useSession } from 'next-auth/react'
-import { useHref } from '~/lib/use-href'
 
 export const Nav = () => {
   const { status } = useSession()
-  const callbackUrl = useHref()
 
   return (
     <>
@@ -19,11 +17,11 @@ export const Nav = () => {
           Todos
         </Link>
         {status === 'authenticated' ? (
-          <a href='/api/auth/signout' className='[&.active]:font-bold'>
+          <Link to='/signout' className='[&.active]:font-bold'>
             Sign Out
-          </a>
+          </Link>
         ) : (
-          <Link to='/signin' search={{ callbackUrl }} className='[&.active]:font-bold'>
+          <Link to='/signin' className='[&.active]:font-bold'>
             Sign In
           </Link>
         )}

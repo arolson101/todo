@@ -15,7 +15,7 @@ import { Input } from '~/components/ui/input'
 import { Switch } from '~/components/ui/switch'
 import { queryLoader } from '~/lib/query-client'
 import { cn } from '~/lib/utils'
-import { appLogo } from '~shared/identity'
+import { AppLogo } from '~shared/identity'
 import { credentialsSchema } from '~shared/models/credentials'
 
 type ClientSafeProvider = NonNullable<Awaited<ReturnType<typeof getProviders>>>[string]
@@ -36,13 +36,13 @@ export const Route = createFileRoute('/signin')({
   component: SignInPage,
   validateSearch: zodSearchValidator(
     z.object({
-      callbackUrl: z.string().optional(),
+      redirect: z.string().optional(),
     }),
   ),
 })
 
 function SignInPage() {
-  const { callbackUrl } = Route.useSearch()
+  const { redirect } = Route.useSearch()
   const nav = useNavigate()
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
@@ -64,19 +64,20 @@ function SignInPage() {
   const divider = hasCredentialsProvider && !!providers.length && !signedIn
 
   function providerSignIn(id: string) {
-    signIn(id, { callbackUrl })
+    signIn(id, { callbackUrl: redirect ?? '/' })
   }
 
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
     const res = await signIn(credentialsProvider?.id, { redirect: false }, values)
     console.log(`signIn(${credentialsProvider?.id})`, values, res)
     if (res?.ok) {
-      nav({ to: callbackUrl ?? '/' })
+      nav({ to: redirect ?? '/' })
     }
   }
 
-  function onSignOut() {
-    signOut({ callbackUrl, redirect: Boolean(callbackUrl) })
+  async function onSignOut() {
+    await signOut({ redirect: false })
+    nav({ to: '/' })
   }
 
   return (
@@ -86,7 +87,7 @@ function SignInPage() {
           <Card className='m-auto'>
             <CardHeader className='space-y-1'>
               <CardTitle className='text-2xl'>
-                <img src={appLogo} className='m-auto w-52 p-8' />
+                <AppLogo width={300} className='m-auto w-52 p-8' />
                 Sign In
               </CardTitle>
             </CardHeader>

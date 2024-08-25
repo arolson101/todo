@@ -27,7 +27,7 @@ import type { UserId } from '~server/db/ids'
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (c: Context) => {
-  const authUser = (await getAuthUser(c))
+  const authUser = await getAuthUser(c)
 
   return {
     ...c,

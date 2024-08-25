@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useSession } from 'next-auth/react'
 
 export const Route = createFileRoute('/')({
@@ -19,7 +19,7 @@ function Index() {
       <div className='p-2'>
         <h3>Welcome Home!</h3>
         <p>
-          <a href='/signin'>Sign In</a>
+          <Link to='/signin'>Sign In</Link>
         </p>
       </div>
     )
