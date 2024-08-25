@@ -1,16 +1,15 @@
-import { RouterProvider } from '@tanstack/react-router'
 import { SessionProvider } from 'next-auth/react'
+import { RouterProvider } from '~/components/router-provider'
 import { ThemeProvider } from '~/components/theme-provider'
 import { TRPCReactProvider } from '~/components/trpc-react-provider'
 import './app.css'
-import { router } from './router'
 
 export function App() {
   return (
     <SessionProvider>
       <TRPCReactProvider>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <RouterProvider router={router} />
+          <RouterProvider />
         </ThemeProvider>
       </TRPCReactProvider>
     </SessionProvider>

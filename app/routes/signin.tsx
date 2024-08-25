@@ -37,12 +37,13 @@ export const Route = createFileRoute('/signin')({
   validateSearch: zodSearchValidator(
     z.object({
       redirect: z.string().optional(),
+      error: z.boolean().default(false).optional(),
     }),
   ),
 })
 
 function SignInPage() {
-  const { redirect } = Route.useSearch()
+  const { redirect, error } = Route.useSearch()
   const nav = useNavigate()
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
@@ -93,11 +94,13 @@ function SignInPage() {
             </CardHeader>
             <CardContent className='grid gap-4'>
               <CardDescription>
-                {signedIn
-                  ? "You're already signed in- do you want to sign out?"
-                  : providers.length === 1
-                    ? `Sign in with ${providers[0].name}`
-                    : 'Sign in with your provider'}
+                {error
+                  ? 'You must sign in to view this page'
+                  : signedIn
+                    ? "You're already signed in- do you want to sign out?"
+                    : providers.length === 1
+                      ? `Sign in with ${providers[0].name}`
+                      : 'Sign in with your provider'}
               </CardDescription>
               <div
                 className={cn('grid gap-6', {

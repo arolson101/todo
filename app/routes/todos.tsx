@@ -1,8 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/todos')({
-  component: TodosPage,
+  beforeLoad({ context: { session } }) {
+    if (session.status !== 'authenticated') {
+      throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
+    }
+  },
   loader: ({ context }) => context.trpc.todo.all.query(),
+  component: TodosPage,
 })
 
 function TodosPage() {

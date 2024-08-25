@@ -15,6 +15,7 @@ export const router = createRouter({
     trpc: createTRPCClient<AppRouter>({
       links: getTrpcLinks(),
     }),
+    session: undefined!,
   },
 })
 
