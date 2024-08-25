@@ -8,6 +8,11 @@ body,
   @apply h-full;
 }
 
+a {
+  @apply text-primary/70 hover:text-primary;
+  /* @apply visited:text-purple-600 dark:visited:text-purple-600; */
+}
+
 /* https://gradient.page/tools/shadcn-ui-theme-generator */
 
 @layer base {
