@@ -1,17 +1,19 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { makeRoute } from '~/lib/router'
+import { trpc } from '~/lib/trpc'
 
-export const Route = createFileRoute('/todos')({
-  beforeLoad({ context: { session } }) {
-    if (session.status !== 'authenticated') {
-      throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
-    }
-  },
-  loader: ({ context }) => context.trpc.todo.all.query(),
-  component: TodosPage,
+const route = makeRoute({
+  path: 'todos',
+  // beforeLoad({ context: { session } }) {
+  //   if (session.status !== 'authenticated') {
+  //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
+  //   }
+  // },
+  loader: () => trpc.todo.all.query(),
+  Component: TodosPage,
 })
 
 function TodosPage() {
-  const todos = Route.useLoaderData()
+  const todos = route.useLoaderData()
 
   return (
     <div className='p-2'>
@@ -24,3 +26,5 @@ function TodosPage() {
     </div>
   )
 }
+
+export default route

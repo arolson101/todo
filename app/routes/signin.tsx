@@ -1,7 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { zodSearchValidator } from '@tanstack/router-zod-adapter'
 import { getProviders, signIn, signOut, useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { FaGithub, FaGoogle } from 'react-icons/fa'
@@ -15,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '~/components/ui/input'
 import { Switch } from '~/components/ui/switch'
 import { queryLoader } from '~/lib/query-client'
+import { makeRoute, useNavigate } from '~/lib/router'
 import { cn } from '~/lib/utils'
 import { credentialsSchema } from '~shared/models/credentials'
 
@@ -31,19 +30,18 @@ const providersQuery = queryOptions({
   },
 })
 
-export const Route = createFileRoute('/signin')({
+const route = makeRoute({
+  path: 'signin',
   loader: queryLoader(providersQuery),
-  component: SignInPage,
-  validateSearch: zodSearchValidator(
-    z.object({
-      redirect: z.string().optional(),
-      error: z.boolean().default(false).optional(),
-    }),
-  ),
+  Component: SignInPage,
+  search: z.object({
+    redirect: z.string().optional(),
+    error: z.boolean().default(false).optional(),
+  }),
 })
 
 function SignInPage() {
-  const { redirect, error } = Route.useSearch()
+  const { redirect, error } = route.useSearchParams()
   const nav = useNavigate()
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
@@ -72,13 +70,13 @@ function SignInPage() {
     const res = await signIn(credentialsProvider?.id, { redirect: false }, values)
     console.log(`signIn(${credentialsProvider?.id})`, values, res)
     if (res?.ok) {
-      nav({ to: redirect ?? '/' })
+      nav(redirect ?? '/')
     }
   }
 
   async function onSignOut() {
     await signOut({ redirect: false })
-    nav({ to: '/' })
+    nav('/')
   }
 
   return (
@@ -221,3 +219,5 @@ function ProviderButton({
     </Button>
   )
 }
+
+export default route

@@ -1,4 +1,4 @@
-import { createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
+import { createTRPCClient, createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
@@ -36,3 +36,7 @@ function getBaseUrl() {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 3000}`
 }
+
+export const trpc = createTRPCClient<AppRouter>({
+  links: getTrpcLinks(),
+})

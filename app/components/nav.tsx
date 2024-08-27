@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from '~/lib/router'
 import { useSession } from 'next-auth/react'
 
 export const Nav = () => {

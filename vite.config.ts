@@ -1,4 +1,3 @@
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -10,7 +9,6 @@ import { htmlTitle } from './shared/identity'
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    TanStackRouterVite(),
     react({
       babel: {
         plugins: ['babel-plugin-react-compiler'],
@@ -26,7 +24,6 @@ export default defineConfig({
         },
       },
     }),
-
     sri(),
   ],
   define: {

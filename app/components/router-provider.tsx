@@ -1,8 +1,6 @@
-import { RouterProvider as TanstackRouterProvider } from '@tanstack/react-router'
-import { useSession } from 'next-auth/react'
+import { RouterProvider as ReactRouterProvider } from '~/lib/router'
 import { router } from '~/router'
 
 export function RouterProvider() {
-  const session = useSession()
-  return <TanstackRouterProvider router={router} context={{ session }} />
+  return <ReactRouterProvider router={router} />
 }
