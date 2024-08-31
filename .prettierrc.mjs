@@ -14,6 +14,7 @@ const config = {
     '^[./]',
     '^(.*)\\.css$',
   ],
+  arrowParens: 'avoid',
   importOrderSortSpecifiers: true,
   importOrderCaseInsensitive: true,
   semi: false,

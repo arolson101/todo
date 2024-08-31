@@ -15,6 +15,9 @@
     "dev:hono": "bun --port 3001 --watch server/hono.ts",
     "dev:vite": "bunx --bun vite",
     "format": "prettier --write .",
+    "rn:start": "react-native start",
+    "rn:android": "react-native run-android",
+    "rn:ios": "react-native run-ios",
     "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
   },
   "dependencies": {
@@ -53,6 +56,8 @@
     "react-dom": "^19.0.0-rc-eb3ad065-20240822",
     "react-hook-form": "^7.52.2",
     "react-icons": "^5.3.0",
+    "react-native": "^0.75.2",
+    "react-native-web": "^0.19.12",
     "react-router": "^6.26.1",
     "react-router-dom": "^6.26.1",
     "superjson": "^2.2.1",
@@ -62,9 +67,16 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/runtime": "^7.25.6",
     "@eslint/js": "^9.9.0",
     "@faker-js/faker": "^8.4.1",
     "@getvim/execute": "^1.0.0",
+    "@react-native/babel-preset": "^0.75.2",
+    "@react-native/eslint-config": "^0.75.2",
+    "@react-native/metro-config": "^0.75.2",
+    "@react-native/typescript-config": "^0.75.2",
     "@takinabradley/copybunplugin": "^0.0.7",
     "@tanstack/eslint-plugin-query": "^5.51.15",
     "@tanstack/router-plugin": "^1.48.6",
@@ -75,13 +87,18 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
     "babel-plugin-react-compiler": "^0.0.0-experimental-48eb8f4-20240822",
+    "babel-plugin-react-native-web": "^0.19.12",
+    "babel-plugin-tsconfig-paths-module-resolver": "^1.0.4",
     "drizzle-kit": "^0.24.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react-compiler": "^0.0.0-experimental-8e3b87c-20240822",
     "eslint-plugin-react-hooks": "^5.1.0-rc-fb9a90fa48-20240614",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "metro-config": "^0.80.10",
+    "nativewind": "^4.1.1",
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",
     "prettier-plugin-packagejson": "^2.5.1",
@@ -93,5 +110,8 @@
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-sri3": "^1.0.5",
     "vite-tsconfig-paths": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
