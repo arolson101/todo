@@ -1,7 +1,7 @@
-export const appName = 'todo'
-export const appDisplayName = 'Todo App'
+import app from '../app.json'
 
-export const htmlTitle = appDisplayName
+export const appName = app.name
+export const appDisplayName = app.displayName
 
 /**
  * Prefix of table names

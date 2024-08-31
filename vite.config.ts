@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { sri } from 'vite-plugin-sri3'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { htmlTitle } from './shared/identity'
+import app from './app.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,9 +19,7 @@ export default defineConfig({
       entry: 'app/index.tsx',
       template: 'index.html',
       inject: {
-        data: {
-          title: htmlTitle,
-        },
+        data: app,
       },
     }),
     sri(),
