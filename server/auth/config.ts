@@ -15,7 +15,7 @@ const getAuthConfig = (c: Context<Environment>) =>
       verificationTokensTable: tables.verificationTokens,
       authenticatorsTable: tables.authenticators,
     }),
-    redirectProxyUrl: c.env.AUTH_URL,
+    redirectProxyUrl: `${c.env.BASE_URL}/api/auth`,
     secret: c.env.AUTH_SECRET,
     providers,
     experimental: { enableWebAuthn: true },
