@@ -106,7 +106,7 @@ function SignInPage() {
                 })}
               >
                 {!signedIn &&
-                  providers.map((provider) => (
+                  providers.map(provider => (
                     <ProviderButton key={provider.name} provider={provider} className='grow' onClick={providerSignIn} />
                   ))}
               </div>
@@ -207,7 +207,7 @@ function ProviderButton({
     .with('github', () => FaGithub)
     .with('google', () => FaGoogle)
     .with('passkey', () => GoPasskeyFill)
-    .otherwise((id) => {
+    .otherwise(id => {
       console.log(`unhandled icon for type '${id}'`)
       return null
     })

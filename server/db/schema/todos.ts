@@ -12,7 +12,7 @@ export const todos = createTable(
     text: _text('text'),
     completed: _bool('completed', false),
   },
-  (t) => ({
+  t => ({
     user: index('todos_user_id').on(t.userId),
   }),
 )

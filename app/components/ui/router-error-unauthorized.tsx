@@ -17,7 +17,9 @@ export const RouterErrorUnauthorized: ErrorRouteComponent = () => {
           <CardDescription>You must be signed in to view this page</CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button onClick={onSignIn} className='w-full'>Sign In</Button>
+          <Button onClick={onSignIn} className='w-full'>
+            Sign In
+          </Button>
         </CardFooter>
       </Card>
     </div>

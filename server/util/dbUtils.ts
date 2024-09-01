@@ -13,7 +13,7 @@ import {
 import * as schema from '~server/db/schema'
 import { dbTablePrefix } from '~shared/identity'
 
-export const createTable: PgTableFn = pgTableCreator((name) => `${dbTablePrefix}${name}`)
+export const createTable: PgTableFn = pgTableCreator(name => `${dbTablePrefix}${name}`)
 
 export const _idNum = <T>(col: string) => serial(col).primaryKey().$type<T>()
 export const _idUUID = <T>(col: string) =>

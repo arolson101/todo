@@ -19,7 +19,7 @@ function TodosPage() {
     <div className='p-2'>
       <p>Todos:</p>
       <ul>
-        {todos.map((todo) => (
+        {todos.map(todo => (
           <li key={todo.id}>{todo.text}</li>
         ))}
       </ul>
