@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
       }),
       createHtmlPlugin({
         minify: true,
-        entry: 'app/index.tsx',
+        entry: 'index.web.ts',
         template: 'index.html',
         inject: {
           data: app,

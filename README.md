@@ -76,7 +76,7 @@ bun start
 - [x] signin/signout pages
 - [x] react-router
 - [x] react-native web
-- [ ] react-native ios
+- [x] react-native ios
 - [ ] react-native macos
 - [ ] react-native windows
 - [ ] react navigation

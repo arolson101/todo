@@ -2,6 +2,7 @@ import { createTRPCClient, createTRPCReact, loggerLink, unstable_httpBatchStream
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
+import { Env, Environment } from '~server/env'
 
 export { AppRouter }
 
@@ -23,7 +24,7 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>
 
 export const getTrpcLinks = () => [
   loggerLink({
-    enabled: (op) => import.meta.env.DEV || (op.direction === 'down' && op.result instanceof Error),
+    enabled: (op) => process.env.NODE_ENV === 'development' || (op.direction === 'down' && op.result instanceof Error),
   }),
   unstable_httpBatchStreamLink({
     transformer: SuperJSON,
