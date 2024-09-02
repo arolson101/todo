@@ -17,6 +17,7 @@
     "format": "prettier --write .",
     "rn:android": "react-native run-android",
     "rn:ios": "react-native run-ios",
+    "rn:macos": "react-native run-macos",
     "rn:start": "react-native start",
     "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
   },
@@ -57,6 +58,7 @@
     "react-hook-form": "^7.52.2",
     "react-icons": "^5.3.0",
     "react-native": "^0.75.2",
+    "react-native-macos": "^0.75.2",
     "react-native-web": "^0.19.12",
     "react-native-windows": "^0.75.0",
     "react-router": "^6.26.1",
