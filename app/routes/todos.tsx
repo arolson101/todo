@@ -1,5 +1,5 @@
 import { makeRoute } from '~/lib/router'
-import { trpc } from '~/lib/trpc'
+import { api, trpc } from '~/lib/trpc'
 
 const route = makeRoute({
   path: 'todos',
@@ -8,21 +8,18 @@ const route = makeRoute({
   //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
   //   }
   // },
-  loader: () => trpc.todo.all.query(),
+  // loader: () => trpc.todo.all.query(),
   Component: TodosPage,
 })
 
 function TodosPage() {
-  const todos = route.useLoaderData()
+  const { data: todos, isLoading } = api.todo.all.useQuery()
 
   return (
     <div className='p-2'>
       <p>Todos:</p>
-      <ul>
-        {todos.map(todo => (
-          <li key={todo.id}>{todo.text}</li>
-        ))}
-      </ul>
+      {isLoading ? <div>Loading...</div> : null}
+      <ul>{todos?.map(todo => <li key={todo.id}>{todo.text}</li>)}</ul>
     </div>
   )
 }
