@@ -14,7 +14,7 @@ export default makeRoute({
       <Nav />
       <hr />
       <Outlet />
-      {import.meta.env.DEV && (
+      {process.env.DEV && (
         <>
           <ReactQueryDevtools />
         </>

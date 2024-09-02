@@ -77,9 +77,9 @@ bun start
 - [x] react-router
 - [x] react-native web
 - [x] react-native ios
-- [ ] react-native macos
+- [x] react-native macos
 - [ ] react-native windows
-- [ ] react navigation
+- [x] react navigation
 - [ ] rewrite pages for react-native
 - [ ] fix server startup/db migrations
 - [ ] first time setup
