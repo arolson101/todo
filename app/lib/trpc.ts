@@ -1,7 +1,7 @@
-import { BASE_URL } from '@env'
 import { createTRPCClient, createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import { Platform } from 'react-native'
+import { BASE_URL } from 'react-native-dotenv'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
 

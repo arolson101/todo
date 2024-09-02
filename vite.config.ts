@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
         jsxRuntime: 'automatic',
         jsxImportSource: 'nativewind',
         babel: {
-          plugins: ['babel-plugin-react-compiler'],
+          // plugins: ['babel-plugin-react-compiler'],
         },
       }),
       createHtmlPlugin({
