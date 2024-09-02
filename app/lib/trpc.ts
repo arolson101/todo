@@ -1,7 +1,6 @@
 import { createTRPCClient, createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import { Platform } from 'react-native'
-import { BASE_URL } from 'react-native-dotenv'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
 
@@ -34,7 +33,7 @@ export const getTrpcLinks = () => [
 ]
 
 function getBaseUrl() {
-  const baseUrl = Platform.select({ native: () => BASE_URL })?.()
+  const baseUrl = Platform.select({ native: process.env.BASE_URL })
   if (baseUrl) return baseUrl
 
   if (typeof window !== 'undefined') return window.location.origin
