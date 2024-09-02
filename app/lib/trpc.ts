@@ -1,8 +1,9 @@
+import { BASE_URL } from '@env'
 import { createTRPCClient, createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
+import { Platform } from 'react-native'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
-import { Env, Environment } from '~server/env'
 
 export { AppRouter }
 
@@ -33,6 +34,9 @@ export const getTrpcLinks = () => [
 ]
 
 function getBaseUrl() {
+  const baseUrl = Platform.select({ native: () => BASE_URL })?.()
+  if (baseUrl) return baseUrl
+
   if (typeof window !== 'undefined') return window.location.origin
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 3000}`

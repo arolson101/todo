@@ -1,5 +1,6 @@
 {
   "name": "todo",
   "displayName": "Todo App",
-  "htmlTitle": "Todo App"
+  "htmlTitle": "Todo App",
+  "apiUrl": "http://localhost:3000"
 }
