@@ -1,3 +1,4 @@
+import { platformColor, platformSelect } from 'nativewind/theme'
 import type { Config } from 'tailwindcss'
 
 export default {
@@ -15,6 +16,11 @@ export default {
     },
     extend: {
       colors: {
+        error: platformSelect({
+          ios: platformColor('systemRed'),
+          android: platformColor('?android:colorError'),
+          default: 'red',
+        }),
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
