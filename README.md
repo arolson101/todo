@@ -69,12 +69,19 @@ bun start
 - [x] vite proxy
 - [x] tailwind
 - [x] shadcn/ui
-- [x] tanstack router
 - [x] trpc
 - [x] env
 - [x] database
 - [x] auth
 - [x] signin/signout pages
+- [x] react-router
+- [x] react-native web
+- [x] react-native ios
+- [x] react-native macos
+- [ ] react-native windows
+- [x] react navigation
+- [x] react-native-reusables
+- [ ] rewrite pages for react-native
 - [ ] fix server startup/db migrations
 - [ ] first time setup
 - [ ] localization

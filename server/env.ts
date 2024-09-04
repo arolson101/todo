@@ -7,7 +7,7 @@ export const env = createEnv({
 
     DATABASE_URL: z.string(),
     AUTH_SECRET: z.string(),
-    AUTH_URL: z.string(),
+    BASE_URL: z.string(),
 
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
@@ -35,6 +35,8 @@ export const env = createEnv({
   emptyStringAsUndefined: true,
 })
 
+export type Env = typeof env
+
 export type Environment = {
-  Bindings: typeof env
+  Bindings: Env
 }

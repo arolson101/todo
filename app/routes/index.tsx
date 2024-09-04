@@ -1,26 +1,24 @@
 import { useSession } from 'next-auth/react'
-import { Link, makeRoute } from '~/lib/router'
+import { SafeAreaView, Text, View } from 'react-native'
+import { Link } from '~/components/ui/link'
+import { makeRoute } from '~/lib/router'
 
 export default makeRoute({
   index: true,
   Component: () => {
-    const session = useSession()
+    // const session = useSession()
 
-    if (session.data) {
-      return (
-        <div className='p-2'>
-          <h3>Welcome Home!</h3>
-        </div>
-      )
-    } else {
-      return (
-        <div className='p-2'>
-          <h3>Welcome Home!</h3>
-          <p>
-            <Link to='/signin'>Sign In</Link>
-          </p>
-        </div>
-      )
-    }
+    // if (session.data) {
+    //   return <Text className='p-2'>Welcome Home!</Text>
+    // } else {
+    return (
+      <SafeAreaView>
+        <View className='p-2'>
+          <Text className='text-foreground'>Welcome Home!</Text>
+          <Link to='/signin'>Sign In</Link>
+        </View>
+      </SafeAreaView>
+    )
+    // }
   },
 })

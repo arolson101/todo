@@ -1,0 +1,7 @@
+{
+  "name": "todo",
+  "displayName": "Todo App",
+  "htmlTitle": "Todo App",
+  "apiUrl": "http://localhost:3000",
+  "prefixes": ["https://todo-app.com", "todo-app://"]
+}

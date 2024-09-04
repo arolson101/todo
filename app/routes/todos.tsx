@@ -1,7 +1,6 @@
 import { RouterError } from '~/components/ui/router-error'
 import { RouterPending } from '~/components/ui/router-pending'
 import { makeRoute } from '~/lib/router'
-import { useQueryClient } from "react-query";
 import { api, trpc } from '~/lib/trpc'
 
 const route = makeRoute({

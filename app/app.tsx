@@ -1,17 +1,17 @@
-import { SessionProvider } from 'next-auth/react'
-import { RouterProvider } from '~/components/router-provider'
-import { ThemeProvider } from '~/components/theme-provider'
-import { TRPCReactProvider } from '~/components/trpc-react-provider'
-import './app.css'
+import { AuthProvider } from '~/components/providers/auth-provider'
+import { RouterProvider } from '~/components/providers/router-provider'
+import { ThemeProvider } from '~/components/providers/theme-provider'
+import { TRPCReactProvider } from '~/components/providers/trpc-react-provider'
+import './global.css'
 
 export function App() {
   return (
-    <SessionProvider>
+    <AuthProvider>
       <TRPCReactProvider>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
           <RouterProvider />
         </ThemeProvider>
       </TRPCReactProvider>
-    </SessionProvider>
+    </AuthProvider>
   )
 }

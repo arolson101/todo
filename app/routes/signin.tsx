@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { AppLogo } from '~/components/ui/app-logo'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
+import { Form, FormField, FormInput, FormItem, FormLabel, FormMessage, FormSwitch } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Switch } from '~/components/ui/switch'
 import { queryLoader } from '~/lib/query-client'
@@ -82,6 +82,10 @@ function SignInPage() {
     nav('/')
   }
 
+  function onReturnHome() {
+    nav('/')
+  }
+
   return (
     <div className='m-auto mt-24 w-full max-w-[400px]'>
       <Form {...form}>
@@ -109,7 +113,7 @@ function SignInPage() {
                 })}
               >
                 {!signedIn &&
-                  providers.map((provider) => (
+                  providers.map(provider => (
                     <ProviderButton key={provider.name} provider={provider} className='grow' onClick={providerSignIn} />
                   ))}
               </div>
@@ -130,44 +134,28 @@ function SignInPage() {
                   <FormField
                     control={form.control}
                     name='email'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder='name@example.com' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => <FormInput label='Email' placeholder='name@example.com' {...field} />}
                   />
 
                   <FormField
                     control={form.control}
                     name='password'
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type='password' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                      <FormInput
+                        label='Password'
+                        placeholder='********'
+                        description='Use a secure password.'
+                        secureTextEntry
+                        autoComplete='password'
+                        {...field}
+                      />
                     )}
                   />
 
                   <FormField
                     control={form.control}
                     name='register'
-                    render={({ field }) => (
-                      <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
-                        <div className='space-y-0.5'>
-                          <FormLabel>Create a new account</FormLabel>
-                        </div>
-                        <FormControl>
-                          <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                      </FormItem>
-                    )}
+                    render={({ field }) => <FormSwitch label='Create a new account' {...field} />}
                   />
                 </>
               )}
@@ -175,16 +163,16 @@ function SignInPage() {
 
             <CardFooter className='flex flex-col gap-4'>
               {hasCredentialsProvider && (
-                <Button type='submit' className='w-full'>
+                <Button onPress={form.handleSubmit(onSubmit)} className='w-full'>
                   Sign In
                 </Button>
               )}
               {signedIn && (
                 <>
-                  <Button type='button' className='w-full' asChild>
-                    <a href='/'>Return Home</a>
+                  <Button className='w-full' onPress={onReturnHome}>
+                    Return Home
                   </Button>
-                  <Button type='button' variant='destructive' className='w-full' onClick={onSignOut}>
+                  <Button variant='destructive' className='w-full' onPress={onSignOut}>
                     Sign Out
                   </Button>
                 </>
@@ -210,13 +198,13 @@ function ProviderButton({
     .with('github', () => FaGithub)
     .with('google', () => FaGoogle)
     .with('passkey', () => GoPasskeyFill)
-    .otherwise((id) => {
+    .otherwise(id => {
       console.log(`unhandled icon for type '${id}'`)
       return null
     })
 
   return (
-    <Button type='button' variant='outline' className={className} onClick={() => onClick(provider.id)}>
+    <Button variant='outline' className={className} onPress={() => onClick(provider.id)}>
       {Icon && <Icon className='mr-2 h-4 w-4' />}
       {provider.name}
     </Button>

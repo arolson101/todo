@@ -5,7 +5,7 @@ import { todos, users } from '~server/db/schema'
 async function main() {
   console.log('Seeding database...')
 
-  await db.transaction(async (_tx) => {
+  await db.transaction(async _tx => {
     // eslint-disable-next-line drizzle/enforce-delete-with-where
     await db.delete(users)
     // eslint-disable-next-line drizzle/enforce-delete-with-where

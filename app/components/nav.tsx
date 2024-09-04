@@ -1,5 +1,5 @@
-import { Link } from '~/lib/router'
 import { useSession } from 'next-auth/react'
+import { Link } from '~/lib/router'
 
 export const Nav = () => {
   const { status } = useSession()
