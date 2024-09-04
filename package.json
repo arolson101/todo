@@ -34,6 +34,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.0",
+    "@react-native/assets-registry": "^0.75.2",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@rn-primitives/checkbox": "^1.0.3",
@@ -135,5 +136,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "patchedDependencies": {
+    "@react-native/assets-registry@0.75.2": "patches/@react-native%2Fassets-registry@0.75.2.patch"
   }
 }
