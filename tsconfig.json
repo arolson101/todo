@@ -8,6 +8,8 @@
       "~shared/*": ["./shared/*"],
       "~server/*": ["./server/*"]
     },
+    "allowJs": true,
+    "skipLibCheck": true,
     "lib": ["DOM"]
   }
 }

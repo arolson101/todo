@@ -80,6 +80,7 @@ bun start
 - [x] react-native macos
 - [ ] react-native windows
 - [x] react navigation
+- [x] react-native-reusables
 - [ ] rewrite pages for react-native
 - [ ] fix server startup/db migrations
 - [ ] first time setup

@@ -40,11 +40,11 @@ function SignOutPage() {
 
         <CardFooter>
           {signedIn ? (
-            <Button type='button' variant='destructive' onClick={onSignOut} className='w-full'>
+            <Button variant='destructive' onPress={onSignOut} className='w-full'>
               Sign Out
             </Button>
           ) : (
-            <Button onClick={onGoHome} className='w-full'>
+            <Button onPress={onGoHome} className='w-full'>
               Go Home
             </Button>
           )}
