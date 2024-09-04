@@ -4,6 +4,7 @@ import { mapEntries } from 'radash'
 import { useColorScheme } from 'react-native'
 import type { RouteObject } from 'react-router-dom'
 import app from '~/../app.json'
+import { nameof } from '~/lib/nameof'
 import { pages } from '~/routes/_pages'
 
 const Stack = createNativeStackNavigator()
@@ -24,7 +25,7 @@ export function RouterProvider() {
 
   return (
     <NavigationContainer linking={linking} theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName={nameof<typeof pages>('Index')}>
         {Object.keys(pages).map(pageName => (
           <Stack.Screen key={pageName} name={pageName} component={pages[pageName as keyof typeof pages].Component!} />
         ))}
