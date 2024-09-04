@@ -19,6 +19,7 @@
     "rn:ios": "react-native run-ios",
     "rn:macos": "react-native run-macos",
     "rn:start": "react-native start",
+    "rn:windows": "react-native run-windows",
     "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
   },
   "dependencies": {

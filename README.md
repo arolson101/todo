@@ -78,7 +78,7 @@ bun start
 - [x] react-native web
 - [x] react-native ios
 - [x] react-native macos
-- [ ] react-native windows
+- [x] react-native windows
 - [x] react navigation
 - [x] react-native-reusables
 - [ ] rewrite pages for react-native
