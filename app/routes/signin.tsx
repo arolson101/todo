@@ -14,6 +14,7 @@ import { Input } from '~/components/ui/input'
 import { Switch } from '~/components/ui/switch'
 import { queryLoader } from '~/lib/query-client'
 import { makeRoute, useNavigate } from '~/lib/router'
+import { api } from '~/lib/trpc'
 import { cn } from '~/lib/utils'
 import { credentialsSchema } from '~shared/models/credentials'
 
@@ -46,6 +47,7 @@ function SignInPage() {
   const { data } = useSuspenseQuery(providersQuery)
   const { credentials: credentialsProvider, ...providerMap } = data ?? {}
   const providers = Object.values(providerMap)
+  const utils = api.useUtils()
 
   const form = useForm<z.infer<typeof credentialsSchema>>({
     resolver: zodResolver(credentialsSchema),
@@ -76,6 +78,7 @@ function SignInPage() {
 
   async function onSignOut() {
     await signOut({ redirect: false })
+    utils.invalidate()
     nav('/')
   }
 
