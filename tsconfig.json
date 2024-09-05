@@ -10,6 +10,7 @@
     },
     "allowJs": true,
     "skipLibCheck": true,
-    "lib": ["DOM"]
+    "lib": ["DOM"],
+    "moduleSuffixes": [".android", ".ios", ".native", ".web", ""]
   }
 }
