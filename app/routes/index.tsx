@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react'
 import { SafeAreaView, View } from 'react-native'
+import { Button } from '~/components/ui/button'
 import { Link } from '~/components/ui/link'
 import { Text } from '~/components/ui/text'
 import { makeRoute } from '~/lib/router'
@@ -16,6 +17,7 @@ export default makeRoute({
       <SafeAreaView>
         <View className='bg-background p-2'>
           <Text>Welcome Home!</Text>
+          <Button><Text>Button!</Text></Button>
           <Link to='/signin'>Sign In</Link>
         </View>
       </SafeAreaView>

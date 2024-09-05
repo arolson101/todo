@@ -1,7 +1,8 @@
-import { AuthProvider } from '~/components/providers/auth-provider'
-import { RouterProvider } from '~/components/providers/router-provider'
-import { ThemeProvider } from '~/components/providers/theme-provider'
-import { TRPCReactProvider } from '~/components/providers/trpc-react-provider'
+import { AuthProvider } from './components/providers/auth-provider'
+import { RouterProvider } from './components/providers/router-provider'
+import { ThemeProvider } from './components/providers/theme-provider'
+import { TRPCReactProvider } from './components/providers/trpc-react-provider'
+import { Window } from './components/ui/window'
 import './global.css'
 
 export function App() {
@@ -9,7 +10,9 @@ export function App() {
     <AuthProvider>
       <TRPCReactProvider>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <RouterProvider />
+          <Window>
+            <RouterProvider />
+          </Window>
         </ThemeProvider>
       </TRPCReactProvider>
     </AuthProvider>

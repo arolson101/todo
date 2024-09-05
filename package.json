@@ -80,6 +80,7 @@
     "react-native-screens": "^3.34.0",
     "react-native-web": "^0.19.12",
     "react-native-windows": "^0.75.0",
+    "react-native-xaml": "^0.0.78",
     "react-router": "^6.26.1",
     "react-router-dom": "^6.26.1",
     "superjson": "^2.2.1",
