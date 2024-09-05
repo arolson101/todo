@@ -3,7 +3,7 @@
   "type": "module",
   "module": "index.ts",
   "scripts": {
-    "build": "concurrently -k \"bun:build:*\"",
+    "build": "concurrently \"bun:build:*\"",
     "build:hono": "cross-env NODE_ENV=production bun run scripts/build.ts",
     "build:vite": "bunx --bun vite build",
     "db:dump": "bun run ./scripts/dump.ts",
@@ -11,11 +11,13 @@
     "db:push": "drizzle-kit push",
     "db:seed": "bun run ./scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "dev": "concurrently -k \"bun:dev:*\"",
+    "dev": "concurrently \"bun:dev:*\"",
     "dev:hono": "bun --port 3001 --watch server/hono.ts",
     "dev:vite": "bunx --bun vite",
     "format": "prettier --write .",
-    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
+    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js",
+    "tauri": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
@@ -68,6 +70,7 @@
     "@tanstack/eslint-plugin-query": "^5.51.15",
     "@tanstack/router-devtools": "^1.48.4",
     "@tanstack/router-plugin": "^1.48.6",
+    "@tauri-apps/cli": "^2.0.0-rc.12",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/bun": "latest",
     "@types/node": "^22.4.1",
