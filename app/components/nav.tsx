@@ -13,7 +13,7 @@ export const Nav = () => {
         <Link to='/about' className='[&.active]:font-bold'>
           About
         </Link>
-        <Link to='/todos' className='[&.active]:font-bold'>
+        <Link preload='intent' to='/todos' className='[&.active]:font-bold'>
           Todos
         </Link>
         {status === 'authenticated' ? (

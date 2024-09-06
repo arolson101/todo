@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/todos')({
-  beforeLoad({ context: { session } }) {
-    if (session.status !== 'authenticated') {
+  beforeLoad({ context: { sessionRef } }) {
+    if (sessionRef.current.status === 'unauthenticated') {
       throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
     }
   },
