@@ -11,11 +11,11 @@ import { Input } from '~/components/ui/input'
 import { db, Todo } from '~/db/dexie'
 
 export const Route = createFileRoute('/todos')({
-  beforeLoad({ context: { sessionRef } }) {
-    if (sessionRef.current.status === 'unauthenticated') {
-      throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
-    }
-  },
+  // beforeLoad({ context: { sessionRef } }) {
+  //   if (sessionRef.current.status === 'unauthenticated') {
+  //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
+  //   }
+  // },
   loader: ({ context }) => context.trpc.todo.all.query(),
   component: TodosPage,
 })
