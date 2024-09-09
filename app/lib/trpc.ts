@@ -1,4 +1,10 @@
-import { createTRPCReact, loggerLink, unstable_httpBatchStreamLink } from '@trpc/react-query'
+import {
+  createTRPCReact,
+  loggerLink,
+  splitLink,
+  unstable_httpBatchStreamLink,
+  unstable_httpSubscriptionLink,
+} from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
@@ -21,15 +27,24 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
 
-export const getTrpcLinks = () => [
-  loggerLink({
-    enabled: (op) => import.meta.env.DEV || (op.direction === 'down' && op.result instanceof Error),
-  }),
-  unstable_httpBatchStreamLink({
+export const getTrpcLinks = () => {
+  const opts = {
     transformer: SuperJSON,
     url: getBaseUrl() + '/api/trpc',
-  }),
-]
+  }
+  return [
+    loggerLink({
+      enabled: (op) => import.meta.env.DEV || (op.direction === 'down' && op.result instanceof Error),
+    }),
+
+    splitLink({
+      // uses the httpSubscriptionLink for subscriptions
+      condition: (op) => op.type === 'subscription',
+      true: unstable_httpSubscriptionLink(opts),
+      false: unstable_httpBatchStreamLink(opts),
+    }),
+  ]
+}
 
 function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin

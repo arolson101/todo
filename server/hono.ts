@@ -26,6 +26,10 @@ app.use(
     endpoint: '/api/trpc',
     router: appRouter,
     createContext: (_opts, c) => createTRPCContext(c),
+    onError(opts) {
+      const { error, type, path, input, ctx, req } = opts
+      console.error('Error:', error)
+    },
   }),
 )
 
