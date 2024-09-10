@@ -1,11 +1,10 @@
 import CopyBunPlugin from '@takinabradley/copybunplugin'
+import type { BuildConfig } from 'bun'
 import path from 'path'
 
 const projectDir = (...paths: string[]) => path.join(import.meta.dir, '..', ...paths).replaceAll('\\', '/') + '/'
 
-await Bun.build({
-  entrypoints: ['./server/hono.ts'],
-  target: 'bun',
+const config = {
   external: [],
   outdir: './dist',
   minify: true,
@@ -24,4 +23,16 @@ await Bun.build({
       ],
     }),
   ],
+} satisfies Partial<BuildConfig>
+
+await Bun.build({
+  ...config,
+  entrypoints: ['./server/serve-bun.ts'],
+  target: 'bun',
+})
+
+await Bun.build({
+  ...config,
+  entrypoints: ['./server/serve-node.ts'],
+  target: 'node',
 })
