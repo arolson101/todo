@@ -54,7 +54,7 @@ export default defineConfig({
           proxy.on('proxyReq', (proxyReq, req, res) => {
             // console.log('proxyReq')
             res.on('close', () => {
-              console.log('close')
+              // console.log('close')
               if (!res.writableEnded) {
                 proxyReq.destroy()
               }
