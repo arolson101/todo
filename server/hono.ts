@@ -2,7 +2,6 @@ import { authHandler } from '@hono/auth-js'
 import { trpcServer } from '@hono/trpc-server'
 import { renderTrpcPanel } from '@metamorph/trpc-panel'
 import { Hono } from 'hono'
-import { serveStatic } from 'hono/bun'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
@@ -38,8 +37,5 @@ if (env.NODE_ENV === 'development') {
     c.html(renderTrpcPanel(appRouter, { url: 'http://localhost:3000/api/trpc', transformer: 'superjson' })),
   )
 }
-
-app.use('*', serveStatic({ root: './public' }))
-app.use('*', serveStatic({ path: './public/index.html' }))
 
 export default app
