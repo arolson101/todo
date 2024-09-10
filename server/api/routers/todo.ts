@@ -35,7 +35,12 @@ export const todoRouter = createTRPCRouter({
   stream: publicProcedure //
     .subscription(async function* (opts) {
       let i = 0
-      while (!opts.ctx.finalized) {
+      let aborted = false
+      opts.ctx.c.req.raw.signal.onabort = () => {
+        aborted = true
+        console.log('aborted')
+      }
+      while (!aborted) {
         i++
         console.log('stream', i)
         yield i
