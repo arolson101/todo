@@ -20,7 +20,8 @@
     "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run serve-bun.js",
     "start:node": "cd dist && cross-env NODE_ENV=production node --env-file=../.env serve-node.js",
     "tauri": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:ios": "tauri ios dev"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
