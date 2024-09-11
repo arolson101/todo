@@ -4,8 +4,10 @@ import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { CreateTRPCClient } from '@trpc/client'
 import { SessionContextValue } from 'next-auth/react'
 import { RefObject } from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Nav } from '~/components/nav'
 import { AppRouter } from '~/lib/trpc'
+import { htmlTitle } from '~shared/identity'
 
 export interface RouterAppContext {
   trpc: CreateTRPCClient<AppRouter>
@@ -15,6 +17,9 @@ export interface RouterAppContext {
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: () => (
     <>
+      <Helmet>
+        <title>{htmlTitle}</title>
+      </Helmet>
       <Nav />
       <hr />
       <Outlet />

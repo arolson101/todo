@@ -1,4 +1,5 @@
 import { SessionProvider } from 'next-auth/react'
+import { HelmetProvider } from 'react-helmet-async'
 import { RouterProvider } from '~/components/router-provider'
 import { ThemeProvider } from '~/components/theme-provider'
 import { TRPCReactProvider } from '~/components/trpc-react-provider'
@@ -9,7 +10,9 @@ export function App() {
     <SessionProvider>
       <TRPCReactProvider>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <RouterProvider />
+          <HelmetProvider>
+            <RouterProvider />
+          </HelmetProvider>
         </ThemeProvider>
       </TRPCReactProvider>
     </SessionProvider>

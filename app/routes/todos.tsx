@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { PageHeader } from '~/components/page-header'
 import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
@@ -45,28 +46,32 @@ function TodosPage() {
   }
 
   return (
-    <div className='p-2'>
-      <p>Todos:</p>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-          <div className='flex flex-row items-center'>
-            <FormField
-              control={form.control}
-              name='text'
-              render={({ field }) => (
-                <FormItem className='max-w-96 grow'>
-                  <FormControl>
-                    <Input placeholder='make a todo item' {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type='submit'>Add</Button>
-          </div>
-        </form>
-      </Form>
-      <ul>{todos?.map((todo) => <TodoItem key={todo._id} todo={todo} />)}</ul>
-    </div>
+    <>
+      <PageHeader title='Todos' />
+
+      <div className='p-2'>
+        <p>Todos:</p>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <div className='flex flex-row items-center'>
+              <FormField
+                control={form.control}
+                name='text'
+                render={({ field }) => (
+                  <FormItem className='max-w-96 grow'>
+                    <FormControl>
+                      <Input placeholder='make a todo item' {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <Button type='submit'>Add</Button>
+            </div>
+          </form>
+        </Form>
+        <ul>{todos?.map((todo) => <TodoItem key={todo._id} todo={todo} />)}</ul>
+      </div>
+    </>
   )
 }
 
