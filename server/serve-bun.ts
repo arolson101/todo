@@ -7,5 +7,5 @@ app.use('*', serveStatic({ path: './public/index.html' }))
 export default app
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.log('unhandledRejection', { reason, promise })
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason)
 })
