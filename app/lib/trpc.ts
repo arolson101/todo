@@ -36,7 +36,7 @@ function getBaseUrl() {
   const baseUrl = Platform.select({ native: process.env.BASE_URL })
   if (baseUrl) return baseUrl
 
-  if (typeof window !== 'undefined') return window.location.origin
+  if (typeof window !== 'undefined') return window.location?.origin
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 3000}`
 }

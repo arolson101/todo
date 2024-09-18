@@ -7,6 +7,7 @@ const config = {
   ],
   importOrder: [
     'server-only', //
+    'react-native-url-polyfill/(.*)$',
     '^@core/(.*)$',
     '<THIRD_PARTY_MODULES>',
     '^@server/(.*)$',

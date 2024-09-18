@@ -1,4 +1,4 @@
-import { RouteComponent } from '@tanstack/react-router'
+import type { RouteComponent } from '@tanstack/react-router'
 import { Spinner } from '~/components/ui/spinner'
 import { Card, CardContent } from './card'
 
