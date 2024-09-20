@@ -10,11 +10,13 @@ function delay(t: number) {
 }
 
 export const todoRouter = createTRPCRouter({
-  hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
-    return {
-      greeting: `Hello ${input.text}`,
-    }
-  }),
+  hello: publicProcedure //
+    .input(z.object({ text: z.string() }))
+    .query(({ input }) => {
+      return {
+        greeting: `Hello ${input.text}`,
+      }
+    }),
 
   randomNumber: publicProcedure //
     .subscription(() => {
