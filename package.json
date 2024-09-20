@@ -12,17 +12,20 @@
     "db:seed": "bun run ./scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
     "dev": "concurrently \"bun:dev:*\"",
-    "dev:hono": "bun --port 3001 --watch server/hono.ts",
+    "dev:hono": "bun run serve:hono:bun",
     "dev:vite": "bunx --bun vite",
     "format": "prettier --write .",
     "rn:android": "react-native run-android",
-    "rn:ios": "react-native run-ios",
     "prern:ios": "cd ios && pod install",
-    "rn:macos": "react-native run-macos",
+    "rn:ios": "react-native run-ios",
     "prern:macos": "cd macos && pod install",
+    "rn:macos": "react-native run-macos",
     "rn:start": "react-native start",
     "rn:windows": "react-native run-windows",
-    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run hono.js"
+    "serve:hono:bun": "bun --port 3001 --watch server/hono.ts",
+    "serve:hono:node": "tsx watch --env-file=.env server/serve-node.ts",
+    "start": "cd dist && cross-env NODE_ENV=production bun --env-file=../.env run serve-bun.js",
+    "start:node": "cd dist && cross-env NODE_ENV=production node --env-file=../.env serve-node.js"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
@@ -143,6 +146,5 @@
   "engines": {
     "node": ">=18"
   },
-  "patchedDependencies": {
-  }
+  "patchedDependencies": {}
 }

@@ -30,7 +30,7 @@ export const createTRPCContext = async (c: Context) => {
   const authUser = await getAuthUser(c)
 
   return {
-    ...c,
+    c,
     db,
     session: authUser?.session,
   }
