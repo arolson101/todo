@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import reactNativeWeb from 'vite-plugin-react-native-web'
 import { sri } from 'vite-plugin-sri3'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import app from './app.json'
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }) => {
           // plugins: ['babel-plugin-react-compiler'],
         },
       }),
+      reactNativeWeb(),
       createHtmlPlugin({
         minify: true,
         entry: 'index.web.ts',
@@ -32,16 +34,9 @@ export default defineConfig(({ mode }) => {
       sri(),
     ],
     define: {
-      // https://github.com/bevacqua/dragula/issues/602#issuecomment-1296313369
-      global: 'window',
-      __DEV__: JSON.stringify(development),
-      // https://tamagui.dev/docs/intro/installation
-      DEV: JSON.stringify(development),
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     },
     resolve: {
       extensions,
-      alias: [{ find: 'react-native', replacement: 'react-native-web' }],
     },
     optimizeDeps: {
       esbuildOptions: {
