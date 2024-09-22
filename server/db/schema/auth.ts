@@ -3,17 +3,20 @@ import { boolean, integer, primaryKey, text, timestamp } from 'drizzle-orm/pg-co
 import { createTable } from '~server/util/dbUtils'
 import type { UserId } from '../ids'
 
-export const users = createTable('user', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID())
-    .$type<UserId>(),
-  name: text('name'),
-  email: text('email').unique(),
-  emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  image: text('image'),
-  passwordHash: text('passwordHash'),
-})
+export const users = createTable(
+  'user', //
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID())
+      .$type<UserId>(),
+    name: text('name'),
+    email: text('email').unique(),
+    emailVerified: timestamp('emailVerified', { mode: 'date' }),
+    image: text('image'),
+    passwordHash: text('passwordHash'),
+  },
+)
 
 export const accounts = createTable(
   'account',
@@ -39,13 +42,16 @@ export const accounts = createTable(
   }),
 )
 
-export const sessions = createTable('session', {
-  sessionToken: text('sessionToken').primaryKey(),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  expires: timestamp('expires', { mode: 'date' }).notNull(),
-})
+export const sessions = createTable(
+  'session', //
+  {
+    sessionToken: text('sessionToken').primaryKey(),
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    expires: timestamp('expires', { mode: 'date' }).notNull(),
+  },
+)
 
 export const verificationTokens = createTable(
   'verificationToken',

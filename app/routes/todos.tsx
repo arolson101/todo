@@ -1,36 +1,60 @@
+import { useQuery } from '@tanstack/react-query'
+import { Text, View } from 'react-native'
+import { Button } from '~/components/ui/button'
 import { RouterError } from '~/components/ui/router-error'
 import { RouterPending } from '~/components/ui/router-pending'
+import { db, migrationsPromise, schema } from '~/db'
 import { makeRoute } from '~/lib/router'
-import { api, trpc } from '~/lib/trpc'
 
 const route = makeRoute({
   path: 'todos',
-  // beforeLoad({ context: { session } }) {
-  //   if (session.status !== 'authenticated') {
-  //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
-  //   }
-  // },
-  // loader: () => trpc.todo.all.query(),
   Component: TodosPage,
 })
 
 function TodosPage() {
-  // const todos = route.useLoaderData()
-  const { data: todos, isLoading, isError, error } = api.todo.all.useQuery()
+  const {
+    data: todos,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => {
+      console.log('waiting for migrations...')
+      await migrationsPromise
+      console.log('getting todos...')
+      return await db.query.todos.findMany()
+    },
+  })
+
+  async function addTodo() {
+    const added = await db
+      .insert(schema.todos)
+      .values({ text: `todo added at ${Date.now()}` })
+      .returning()
+    // console.log({ added })
+    refetch()
+  }
 
   if (isLoading) {
-    return <RouterPending />
+    // return <RouterPending />
+    return <Text>Loading</Text>
   }
 
   if (isError) {
-    return <RouterError reset={() => {}} error={error as unknown as Error} />
+    // return <RouterError reset={() => {}} error={error as unknown as Error} />
+    return <Text>Error: {error.message}</Text>
   }
 
   return (
-    <div className='p-2'>
-      <p>Todos:</p>
-      <ul>{todos?.map((todo) => <li key={todo.id}>{todo.text}</li>)}</ul>
-    </div>
+    <View className='bg-background p-2'>
+      <Text>Todos:</Text>
+      <View>{todos?.map(todo => <Text key={todo.id}>{todo.text}</Text>)}</View>
+      <Button onPress={addTodo}>
+        <Text>Add Todo</Text>
+      </Button>
+    </View>
   )
 }
 

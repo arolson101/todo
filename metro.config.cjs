@@ -17,7 +17,6 @@ const rnwPath = fs.realpathSync(path.resolve(require.resolve('react-native-windo
  */
 
 const config = {
-  //
   resolver: {
     blockList: exclusionList([
       // This stops "react-native run-windows" from causing the metro server to crash if its already running
@@ -27,7 +26,6 @@ const config = {
       new RegExp(`${rnwPath}/target/.*`),
       /.*\.ProjectImports\.zip/,
     ]),
-    //
   },
   transformer: {
     getTransformOptions: async () => ({
@@ -40,4 +38,6 @@ const config = {
 }
 
 const mergedConfig = mergeConfig(getDefaultConfig(__dirname), config)
+mergedConfig.resolver.sourceExts.push('sql')
+
 module.exports = withNativeWind(mergedConfig, { input: './app/global.css' })

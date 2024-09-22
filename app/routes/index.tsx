@@ -19,6 +19,7 @@ export default makeRoute({
           <Text>Welcome Home!</Text>
           <Button><Text>Button!</Text></Button>
           <Link to='/signin'>Sign In</Link>
+          <Link to='/todos'>Todos</Link>
         </View>
       </SafeAreaView>
     )
