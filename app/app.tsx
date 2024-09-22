@@ -4,7 +4,7 @@ import { RouterProvider } from '~/components/router-provider'
 import { ThemeProvider } from '~/components/theme-provider'
 import { TRPCReactProvider } from '~/components/trpc-react-provider'
 import './app.css'
-import './sqlite'
+import './db/sqlite'
 
 export function App() {
   return (

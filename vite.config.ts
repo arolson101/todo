@@ -1,7 +1,8 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig, UserConfig } from 'vite'
+import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import plainText from 'vite-plugin-plain-text'
 import { sri } from 'vite-plugin-sri3'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { htmlTitle } from './shared/identity'
@@ -27,6 +28,7 @@ export default defineConfig({
       },
     }),
     sri(),
+    plainText(['**/*.sql'], { namedExport: false }),
   ],
   define: {
     process: {
