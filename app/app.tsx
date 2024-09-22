@@ -4,7 +4,7 @@ import { ThemeProvider } from './components/providers/theme-provider'
 import { TRPCReactProvider } from './components/providers/trpc-react-provider'
 import { Window } from './components/ui/window'
 import './global.css'
-import './sqlite'
+import './db/sqlite.web'
 
 export function App() {
   return (

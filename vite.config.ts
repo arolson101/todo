@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig, UserConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import plainText from 'vite-plugin-plain-text'
 import reactNativeWeb from 'vite-plugin-react-native-web'
 import { sri } from 'vite-plugin-sri3'
 import topLevelAwait from 'vite-plugin-top-level-await'
@@ -34,6 +35,7 @@ export default defineConfig(({ mode }) => {
       }),
       topLevelAwait(),
       sri(),
+      plainText(['**/*.sql'], { namedExport: false }),
     ],
     define: {},
     resolve: {
