@@ -1,6 +1,6 @@
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { sri } from 'vite-plugin-sri3'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -26,13 +26,15 @@ export default defineConfig({
         },
       },
     }),
-
     sri(),
   ],
   define: {
     process: {
       env: {},
     },
+  },
+  optimizeDeps: {
+    exclude: ['@sqlite.org/sqlite-wasm', '@libsql/client-wasm'],
   },
   build: {
     outDir: './dist/public',
@@ -45,6 +47,10 @@ export default defineConfig({
         target: 'http://localhost:3001',
         changeOrigin: true,
       },
+    },
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     },
   },
 })

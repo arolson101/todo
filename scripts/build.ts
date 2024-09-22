@@ -26,7 +26,7 @@ const config = {
 } satisfies Partial<BuildConfig>
 
 function report(out: BuildOutput) {
-  console.log(`${out.success ? '✅' : '❌'} built ${out.outputs[0].path}`)
+  console.log(`${out.success ? '✅' : '❌'} built ${out.outputs.map(o => o.path)}`)
   for (const log of out.logs) {
     switch (log.level) {
       case 'debug':

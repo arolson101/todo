@@ -5,7 +5,7 @@
   "scripts": {
     "build": "concurrently \"bun:build:*\"",
     "build:hono": "cross-env NODE_ENV=production bun run scripts/build.ts",
-    "build:vite": "bunx --bun vite build",
+    "build:vite": "vite build",
     "db:dump": "bun run ./scripts/dump.ts",
     "db:migrations": "bunx drizzle-kit generate",
     "db:push": "drizzle-kit push",
@@ -33,6 +33,7 @@
     "@hono/node-server": "^1.13.1",
     "@hono/trpc-server": "^0.3.2",
     "@hookform/resolvers": "^3.9.0",
+    "@libsql/client-wasm": "^0.14.0",
     "@metamorph/trpc-panel": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -110,6 +111,7 @@
     "vite": "^5.4.8",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-sri3": "^1.0.5",
+    "vite-plugin-top-level-await": "^1.4.4",
     "vite-tsconfig-paths": "^5.0.1"
   }
 }

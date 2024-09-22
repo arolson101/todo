@@ -3,6 +3,7 @@ import { initAuthConfig } from '@hono/auth-js'
 import { trpcServer } from '@hono/trpc-server'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
+import { secureHeaders } from 'hono/secure-headers'
 import { trpcEndpoint } from '~shared/identity'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
@@ -10,7 +11,16 @@ import { getAuthConfig } from './auth/config'
 import { dbMiddleware } from './db/db-middleware'
 import { env, envMiddleware } from './env'
 
+export { authHandler, verifyAuth } from '@hono/auth-js'
+
 const app = new Hono()
+app.use(
+  secureHeaders({
+    // https://sqlite.org/wasm/doc/trunk/persistence.md#coop-coep
+    crossOriginEmbedderPolicy: 'require-corp',
+    crossOriginOpenerPolicy: 'same-origin',
+  }),
+)
 
 if (env.NODE_ENV === 'development') {
   app.use('*', logger())
