@@ -116,5 +116,9 @@
     "vite-plugin-sri3": "^1.0.5",
     "vite-plugin-top-level-await": "^1.4.4",
     "vite-tsconfig-paths": "^5.0.1"
-  }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "patchedDependencies": { "drizzle-orm@0.33.0": "patches/drizzle-orm@0.33.0.patch" }
 }

@@ -1,29 +1,29 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "3d8a6699-fcac-43b1-a1d8-b604d3ead49f",
+  "id": "9f8a1b37-9adf-4f57-8707-4a2afe333d06",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "users": {
-      "name": "users",
+    "todos": {
+      "name": "todos",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
         },
-        "text_modifiers": {
-          "name": "text_modifiers",
+        "text": {
+          "name": "text",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "''"
         },
-        "int_modifiers": {
-          "name": "int_modifiers",
+        "completed": {
+          "name": "completed",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,

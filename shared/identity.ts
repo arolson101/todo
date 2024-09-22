@@ -9,6 +9,7 @@ export const htmlTitle = appDisplayName
  * https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const dbTablePrefix = `${appName}_`
+export const dbFileName = `${appName}_db.db`
 
 export const browserDbName = `${dbTablePrefix}db`
 
