@@ -3,6 +3,7 @@ import { RouterProvider } from './components/providers/router-provider'
 import { ThemeProvider } from './components/providers/theme-provider'
 import { TRPCReactProvider } from './components/providers/trpc-react-provider'
 import { Window } from './components/ui/window'
+import './db'
 import './global.css'
 
 export function App() {

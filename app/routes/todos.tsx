@@ -49,8 +49,14 @@ function TodosPage() {
 
   return (
     <View className='bg-background p-2'>
-      <Text>Todos:</Text>
-      <View>{todos?.map(todo => <Text key={todo.id}>{todo.text}</Text>)}</View>
+      <Text className='text-foreground'>Todos:</Text>
+      <View>
+        {todos?.map(todo => (
+          <Text className='text-foreground' key={todo.id}>
+            {todo.text}
+          </Text>
+        ))}
+      </View>
       <Button onPress={addTodo}>
         <Text>Add Todo</Text>
       </Button>
