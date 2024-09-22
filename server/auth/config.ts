@@ -15,6 +15,7 @@ const getAuthConfig = (c: Context<Environment>) =>
       verificationTokensTable: tables.verificationTokens,
       authenticatorsTable: tables.authenticators,
     }),
+    trustHost: true,
     redirectProxyUrl: `${c.env.BASE_URL}/api/auth`,
     secret: c.env.AUTH_SECRET,
     providers,

@@ -1,8 +1,9 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import reactNativeWeb from 'vite-plugin-react-native-web'
 import { sri } from 'vite-plugin-sri3'
+import topLevelAwait from 'vite-plugin-top-level-await'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import app from './app.json'
 
@@ -31,14 +32,15 @@ export default defineConfig(({ mode }) => {
           data: app,
         },
       }),
+      topLevelAwait(),
       sri(),
     ],
-    define: {
-    },
+    define: {},
     resolve: {
       extensions,
     },
     optimizeDeps: {
+      exclude: ['@sqlite.org/sqlite-wasm', '@libsql/client-wasm'],
       esbuildOptions: {
         resolveExtensions: extensions,
         // https://github.com/vitejs/vite-plugin-react/issues/192#issuecomment-1627384670
@@ -59,6 +61,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       },
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+      },
     },
-  }
+  } satisfies UserConfig
 })
