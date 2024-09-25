@@ -1,13 +1,7 @@
 import * as React from 'react'
 import { PropsWithChildren } from 'react'
 import { useWindowDimensions } from 'react-native'
-import {
-  FontIcon,
-  NavigationViewPaneDisplayMode,
-  NavigationViewPriority,
-  TextBlock,
-  WinUI,
-} from 'react-native-xaml'
+import { FontIcon, NavigationViewPaneDisplayMode, NavigationViewPriority, TextBlock, WinUI } from 'react-native-xaml'
 
 export function Window({ children }: PropsWithChildren) {
   const { height, width } = useWindowDimensions()

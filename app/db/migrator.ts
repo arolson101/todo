@@ -1,10 +1,10 @@
 // https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/libsql/migrator.ts
 // https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/op-sqlite/migrator.ts
 import type { MigrationMeta } from 'drizzle-orm/migrator'
-import { sql } from 'drizzle-orm/sql'
-import { SqliteType } from './sqlite-type'
-import * as schema from './schema'
 import { OPSQLiteDatabase } from 'drizzle-orm/op-sqlite'
+import { sql } from 'drizzle-orm/sql'
+import * as schema from './schema'
+import { SqliteType } from './sqlite-type'
 
 interface MigrationConfig {
   journal: {
@@ -42,7 +42,7 @@ function readMigrationFiles({ journal, migrations }: MigrationConfig): Migration
   return migrationQueries
 }
 
-export async function migrate(db: OPSQLiteDatabase<typeof schema>, config: MigrationConfig) {
+export async function migrate(db: SqliteType, config: MigrationConfig) {
   const migrations = readMigrationFiles(config)
   const migrationsTable = '__drizzle_migrations'
 

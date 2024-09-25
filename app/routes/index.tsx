@@ -17,7 +17,9 @@ export default makeRoute({
       <SafeAreaView>
         <View className='bg-background p-2'>
           <Text>Welcome Home!</Text>
-          <Button><Text>Button!</Text></Button>
+          <Button>
+            <Text>Button!</Text>
+          </Button>
           <Link to='/signin'>Sign In</Link>
           <Link to='/todos'>Todos</Link>
         </View>

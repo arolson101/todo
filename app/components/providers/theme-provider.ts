@@ -1,6 +1,6 @@
 import { assert, type Equals } from 'tsafe'
-import type * as web from './theme-provider.web'
 import type * as native from './theme-provider.native'
+import type * as web from './theme-provider.web'
 
 assert<Equals<typeof native, typeof web>>()
 
