@@ -9,7 +9,7 @@
       "~server/*": ["./server/*"]
     },
     "allowJs": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "lib": ["DOM"],
     "moduleSuffixes": [".android", ".ios", ".native", ".web", ""]
   }
