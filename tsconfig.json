@@ -11,6 +11,6 @@
     "allowJs": true,
     "skipLibCheck": false,
     "lib": ["DOM"],
-    "moduleSuffixes": [".android", ".ios", ".native", ".web", ""]
+    "moduleSuffixes": [".android", ".ios", ".macos", ".native", ".web", ".windows", ""]
   }
 }
