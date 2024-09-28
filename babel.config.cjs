@@ -4,5 +4,6 @@ module.exports = {
     ['tsconfig-paths-module-resolver'],
     ['module:react-native-dotenv', { allowlist: ['BASE_URL'] }], // see @env.d.ts
     ['babel-plugin-inline-import', { extensions: ['.sql'] }],
+    ['react-native-reanimated/plugin'],
   ],
 }
