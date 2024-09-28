@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		18F70421D0C5763C8031AD97 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C3FB2981F87E9D71F8DCBB42 /* PrivacyInfo.xcprivacy */; };
 		31191BC6386C48F341ABEC52 /* libPods-todo-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07E1746ED4145962CB536A8A /* libPods-todo-macOS.a */; };
+		493C18C92CA7DFD700A33025 /* SidebarViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 493C18C82CA7DFD700A33025 /* SidebarViewManager.m */; };
+		493C18CA2CA7DFD700A33025 /* SidebarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 493C18C62CA7DFD700A33025 /* SidebarView.m */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
 		514201552437B4B40078DB4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 514201532437B4B40078DB4F /* Main.storyboard */; };
@@ -19,7 +21,11 @@
 /* Begin PBXFileReference section */
 		07E1746ED4145962CB536A8A /* libPods-todo-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-todo-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		17976C5549277F3C29330791 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		17976C5549277F3C29330791 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		493C18C52CA7DFD700A33025 /* SidebarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarView.h; sourceTree = "<group>"; };
+		493C18C62CA7DFD700A33025 /* SidebarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarView.m; sourceTree = "<group>"; };
+		493C18C72CA7DFD700A33025 /* SidebarViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarViewManager.h; sourceTree = "<group>"; };
+		493C18C82CA7DFD700A33025 /* SidebarViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarViewManager.m; sourceTree = "<group>"; };
 		514201492437B4B30078DB4F /* todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5142014B2437B4B30078DB4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5142014C2437B4B30078DB4F /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -29,7 +35,7 @@
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* todo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = todo.entitlements; sourceTree = "<group>"; };
 		A87FA284707FEB307098ED64 /* Pods-todo-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-todo-macOS.release.xcconfig"; path = "Target Support Files/Pods-todo-macOS/Pods-todo-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		C3FB2981F87E9D71F8DCBB42 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C3FB2981F87E9D71F8DCBB42 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E1E8376D62B286CBDE4BD012 /* Pods-todo-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-todo-macOS.debug.xcconfig"; path = "Target Support Files/Pods-todo-macOS/Pods-todo-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -65,6 +71,10 @@
 		5142014A2437B4B30078DB4F /* todo-macOS */ = {
 			isa = PBXGroup;
 			children = (
+				493C18C52CA7DFD700A33025 /* SidebarView.h */,
+				493C18C62CA7DFD700A33025 /* SidebarView.m */,
+				493C18C72CA7DFD700A33025 /* SidebarViewManager.h */,
+				493C18C82CA7DFD700A33025 /* SidebarViewManager.m */,
 				5142014B2437B4B30078DB4F /* AppDelegate.h */,
 				5142014C2437B4B30078DB4F /* AppDelegate.mm */,
 				514201512437B4B40078DB4F /* Assets.xcassets */,
@@ -114,7 +124,6 @@
 				E1E8376D62B286CBDE4BD012 /* Pods-todo-macOS.debug.xcconfig */,
 				A87FA284707FEB307098ED64 /* Pods-todo-macOS.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -313,6 +322,8 @@
 			files = (
 				514201582437B4B40078DB4F /* main.m in Sources */,
 				5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */,
+				493C18C92CA7DFD700A33025 /* SidebarViewManager.m in Sources */,
+				493C18CA2CA7DFD700A33025 /* SidebarView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
