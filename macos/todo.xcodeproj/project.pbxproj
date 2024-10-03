@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		18F70421D0C5763C8031AD97 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C3FB2981F87E9D71F8DCBB42 /* PrivacyInfo.xcprivacy */; };
 		31191BC6386C48F341ABEC52 /* libPods-todo-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07E1746ED4145962CB536A8A /* libPods-todo-macOS.a */; };
+		49169BC82CAA158200621CD5 /* RNSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49169BC62CAA158200621CD5 /* RNSplitView.m */; };
+		49169BC92CAA158200621CD5 /* RNSplitViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49169BC72CAA158200621CD5 /* RNSplitViewManager.m */; };
 		493C18C92CA7DFD700A33025 /* SidebarViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 493C18C82CA7DFD700A33025 /* SidebarViewManager.m */; };
 		493C18CA2CA7DFD700A33025 /* SidebarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 493C18C62CA7DFD700A33025 /* SidebarView.m */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
@@ -22,6 +24,9 @@
 		07E1746ED4145962CB536A8A /* libPods-todo-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-todo-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		17976C5549277F3C29330791 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		49169BC52CAA158200621CD5 /* RNSplitView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNSplitView.h; sourceTree = "<group>"; };
+		49169BC62CAA158200621CD5 /* RNSplitView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNSplitView.m; sourceTree = "<group>"; };
+		49169BC72CAA158200621CD5 /* RNSplitViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNSplitViewManager.m; sourceTree = "<group>"; };
 		493C18C52CA7DFD700A33025 /* SidebarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarView.h; sourceTree = "<group>"; };
 		493C18C62CA7DFD700A33025 /* SidebarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SidebarView.m; sourceTree = "<group>"; };
 		493C18C72CA7DFD700A33025 /* SidebarViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SidebarViewManager.h; sourceTree = "<group>"; };
@@ -71,6 +76,9 @@
 		5142014A2437B4B30078DB4F /* todo-macOS */ = {
 			isa = PBXGroup;
 			children = (
+				49169BC52CAA158200621CD5 /* RNSplitView.h */,
+				49169BC62CAA158200621CD5 /* RNSplitView.m */,
+				49169BC72CAA158200621CD5 /* RNSplitViewManager.m */,
 				493C18C52CA7DFD700A33025 /* SidebarView.h */,
 				493C18C62CA7DFD700A33025 /* SidebarView.m */,
 				493C18C72CA7DFD700A33025 /* SidebarViewManager.h */,
@@ -321,6 +329,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				514201582437B4B40078DB4F /* main.m in Sources */,
+				49169BC82CAA158200621CD5 /* RNSplitView.m in Sources */,
+				49169BC92CAA158200621CD5 /* RNSplitViewManager.m in Sources */,
 				5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */,
 				493C18C92CA7DFD700A33025 /* SidebarViewManager.m in Sources */,
 				493C18CA2CA7DFD700A33025 /* SidebarView.m in Sources */,
