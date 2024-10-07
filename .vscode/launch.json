@@ -9,7 +9,8 @@
       "type": "bun",
       "request": "launch",
       "name": "Debug Server",
-      "program": "server/index.ts",
+      "program": "server/serve-bun.ts",
+      "runtimeArgs": ["--port", "3001"],
       "watchMode": "hot"
     },
     {

@@ -12,7 +12,7 @@
     "db:seed": "bun run ./scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
     "dev": "concurrently \"bun:dev:*\"",
-    "dev:hono": "bun run serve:hono:bun",
+    "dev:hono": "bun run serve:hono:node",
     "dev:vite": "bunx --bun vite",
     "format": "prettier --write .",
     "serve:hono:bun": "bun --port 3001 --watch server/hono.ts",
