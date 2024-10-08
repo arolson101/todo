@@ -8,6 +8,7 @@ import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { api } from '~/lib/trpc'
+import type { TodoId, UserId } from '~server/db/ids'
 import type { Todo } from '~shared/types'
 
 export const Route = createFileRoute('/todos')({
@@ -26,7 +27,28 @@ const formSchema = z.object({
 
 function TodosPage() {
   const { data: todos, refetch } = api.todo.all.useQuery()
-  const { mutate: addTodo } = api.todo.create.useMutation()
+  const utils = api.useUtils()
+  const addTodo = api.todo.create.useMutation({
+    async onMutate(newTodo) {
+      await utils.todo.all.cancel()
+      const prevData = utils.todo.all.getData()
+      const nextTodo = {
+        userId: '123' as UserId,
+        id: -123 as TodoId,
+        deleted: false,
+        text: newTodo.text ?? '???',
+        completed: false,
+      } satisfies Todo
+      utils.todo.all.setData(undefined, (old) => [...(old ?? []), nextTodo])
+      return { prevData }
+    },
+    onError(err, newTodo, ctx) {
+      utils.todo.all.setData(undefined, ctx?.prevData)
+    },
+    onSettled() {
+      utils.todo.all.invalidate()
+    },
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,7 +58,7 @@ function TodosPage() {
   })
 
   async function onSubmit({ text }: z.infer<typeof formSchema>) {
-    await addTodo({ text })
+    await addTodo.mutateAsync({ text })
     form.reset()
     await refetch()
   }
@@ -72,24 +94,24 @@ function TodosPage() {
 }
 
 function TodoItem({ todo, refetch }: { todo: Todo; refetch: () => any }) {
-  const { mutate: setCompleted } = api.todo.setCompleted.useMutation()
-  const { mutate: setDeleted } = api.todo.remove.useMutation()
+  const setCompleted = api.todo.setCompleted.useMutation()
+  const setDeleted = api.todo.remove.useMutation()
 
   async function setChecked(completed: boolean) {
-    await setCompleted({ id: todo.id, completed })
+    await setCompleted.mutateAsync({ id: todo.id, completed })
     refetch()
   }
 
   async function remove() {
-    await setDeleted(todo.id)
+    await setDeleted.mutateAsync(todo.id)
     refetch()
   }
 
   return (
     <li className='flex items-center gap-2'>
-      <Checkbox checked={todo.completed} onCheckedChange={setChecked} />
+      <Checkbox checked={todo.completed} onCheckedChange={setChecked} disabled={setCompleted.isPending} />
       {todo.text}
-      <Button variant='link' onClick={remove}>
+      <Button variant='link' onClick={remove} disabled={setDeleted.isPending}>
         X
       </Button>
     </li>
