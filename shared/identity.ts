@@ -10,6 +10,8 @@ export const htmlTitle = appDisplayName
  */
 export const dbTablePrefix = `${appName}_`
 
+export const browserDbName = `${dbTablePrefix}db`
+
 /**
  * Application logo
  * (in public folder)

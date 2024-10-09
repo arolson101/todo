@@ -15,14 +15,14 @@ import { dbTablePrefix } from '~shared/identity'
 
 export const createTable: PgTableFn = pgTableCreator((name) => `${dbTablePrefix}${name}`)
 
-export const _idNum = <T>(col: string) => serial(col).primaryKey().$type<T>()
+export const _idNum = <T = number>(col: string) => serial(col).primaryKey().$type<T>()
 export const _idUUID = <T>(col: string) =>
   text(col)
     .primaryKey()
     .$type<T>()
     .$defaultFn(() => crypto.randomUUID() as T)
 export const _int = (col: string) => integer(col).notNull().default(0)
-export const _text = (col: string) => text(col).notNull().default('')
+export const _text = <T extends string>(col: string) => text(col).notNull().default('').$type<T>()
 export const _bool = (col: string, dflt: boolean) => boolean(col).notNull().default(dflt)
 // export const _enum = <TName extends string, U extends string, T extends Readonly<[U, ...U[]]>>(col: TName, enm: (x: TName) => PgTextBuilderInitial<TName, Writable<T>>) => enm(col).notNull()
 export const _decimal = (col: string) => decimal(col).notNull().default(`0`)

@@ -15,6 +15,27 @@
       "when": 1728319884263,
       "tag": "0001_majestic_komodo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728507057393,
+      "tag": "0002_handy_silverclaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728511592073,
+      "tag": "0003_acoustic_slyde",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1728511788842,
+      "tag": "0004_moaning_juggernaut",
+      "breakpoints": true
     }
   ]
 }
