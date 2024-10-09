@@ -28,5 +28,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["app"]
+  "include": ["app", "shared"]
 }

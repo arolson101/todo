@@ -1,4 +1,4 @@
-import { authHandler } from '@hono/auth-js'
+import { authHandler, verifyAuth } from '@hono/auth-js'
 import { trpcServer } from '@hono/trpc-server'
 import { renderTrpcPanel } from '@metamorph/trpc-panel'
 import { Hono } from 'hono'
@@ -7,8 +7,6 @@ import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
 import { authConfig } from './auth/config'
 import { env, type Environment } from './env'
-
-export { authHandler, verifyAuth } from '@hono/auth-js'
 
 const app = new Hono<Environment>()
 

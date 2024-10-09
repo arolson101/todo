@@ -1,7 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute } from '@tanstack/react-router'
-import { useLiveQuery } from 'dexie-react-hooks'
-import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PageHeader } from '~/components/page-header'
@@ -9,7 +7,9 @@ import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { db, Todo } from '~/db/dexie'
+import { api } from '~/lib/trpc'
+import type { TodoId, UserId } from '~server/db/ids'
+import type { Todo } from '~shared/types'
 
 export const Route = createFileRoute('/todos')({
   // beforeLoad({ context: { sessionRef } }) {
@@ -17,7 +17,7 @@ export const Route = createFileRoute('/todos')({
   //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
   //   }
   // },
-  loader: ({ context }) => context.trpc.todo.all.query(),
+  // loader: ({ context }) => context.trpc.todo.all.query(),
   component: TodosPage,
 })
 
@@ -26,7 +26,29 @@ const formSchema = z.object({
 })
 
 function TodosPage() {
-  const todos = useLiveQuery(() => db.todos.where({ _deleted: 0 }).toArray())
+  const { data: todos, refetch } = api.todo.all.useQuery()
+  const utils = api.useUtils()
+  const addTodo = api.todo.create.useMutation({
+    async onMutate(newTodo) {
+      await utils.todo.all.cancel()
+      const prevData = utils.todo.all.getData()
+      const nextTodo = {
+        userId: '123' as UserId,
+        id: -123 as TodoId,
+        deleted: false,
+        text: newTodo.text ?? '???',
+        completed: false,
+      } satisfies Todo
+      utils.todo.all.setData(undefined, (old) => [...(old ?? []), nextTodo])
+      return { prevData }
+    },
+    onError(err, newTodo, ctx) {
+      utils.todo.all.setData(undefined, ctx?.prevData)
+    },
+    onSettled() {
+      utils.todo.all.invalidate()
+    },
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,14 +57,10 @@ function TodosPage() {
     },
   })
 
-  function onSubmit({ text }: z.infer<typeof formSchema>) {
-    db.todos.add({
-      _deleted: 0,
-      _guid: nanoid(),
-      text,
-      completed: false,
-    })
+  async function onSubmit({ text }: z.infer<typeof formSchema>) {
+    await addTodo.mutateAsync({ text })
     form.reset()
+    await refetch()
   }
 
   return (
@@ -69,26 +87,31 @@ function TodosPage() {
             </div>
           </form>
         </Form>
-        <ul>{todos?.map((todo) => <TodoItem key={todo._id} todo={todo} />)}</ul>
+        <ul>{todos?.map((todo) => <TodoItem key={todo.id} todo={todo} refetch={refetch} />)}</ul>
       </div>
     </>
   )
 }
 
-function TodoItem({ todo }: { todo: Todo }) {
-  function setChecked(completed: boolean) {
-    db.todos.update(todo._id, { completed })
+function TodoItem({ todo, refetch }: { todo: Todo; refetch: () => any }) {
+  const setCompleted = api.todo.setCompleted.useMutation()
+  const setDeleted = api.todo.remove.useMutation()
+
+  async function setChecked(completed: boolean) {
+    await setCompleted.mutateAsync({ id: todo.id, completed })
+    refetch()
   }
 
-  function remove() {
-    db.todos.update(todo._id, { _deleted: 1 })
+  async function remove() {
+    await setDeleted.mutateAsync(todo.id)
+    refetch()
   }
 
   return (
     <li className='flex items-center gap-2'>
-      <Checkbox checked={todo.completed} onCheckedChange={setChecked} />
+      <Checkbox checked={todo.completed} onCheckedChange={setChecked} disabled={setCompleted.isPending} />
       {todo.text}
-      <Button variant='link' onClick={remove}>
+      <Button variant='link' onClick={remove} disabled={setDeleted.isPending}>
         X
       </Button>
     </li>

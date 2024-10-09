@@ -11,6 +11,7 @@ export const todos = createTable(
     userId: _refidUUID<UserId>('user_id', () => users.id),
     text: _text('text'),
     completed: _bool('completed', false),
+    deleted: _bool('deleted', false),
   },
   (t) => ({
     user: index('todos_user_id').on(t.userId),
