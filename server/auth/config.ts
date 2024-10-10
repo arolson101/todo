@@ -1,12 +1,13 @@
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import { type AuthConfig, initAuthConfig } from '@hono/auth-js'
+import type { Context } from 'hono'
 import { db } from '~server/db/db'
 import * as tables from '~server/db/schema/auth'
 import { env } from '~server/env'
 import { providers } from './providers'
 
-const getAuthConfig = () =>
-  ({
+export function getAuthConfig(c: Context) {
+  return {
     adapter: DrizzleAdapter(db, {
       usersTable: tables.users,
       accountsTable: tables.accounts,
@@ -29,6 +30,5 @@ const getAuthConfig = () =>
       error: console.error,
     },
     // debug: c.env.NODE_ENV === 'development',
-  }) satisfies AuthConfig
-
-export const authConfig = initAuthConfig(getAuthConfig)
+  } satisfies AuthConfig
+}

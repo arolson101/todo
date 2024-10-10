@@ -12,6 +12,8 @@ export const dbTablePrefix = `${appName}_`
 
 export const browserDbName = `${dbTablePrefix}db`
 
+export const trpcEndpoint = `/api/trpc`
+
 /**
  * Application logo
  * (in public folder)

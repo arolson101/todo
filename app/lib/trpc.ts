@@ -9,6 +9,7 @@ import {
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
 import type { AppRouter } from '~server/api'
+import { trpcEndpoint } from '~shared/identity'
 
 export { AppRouter }
 
@@ -31,7 +32,7 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>
 export const getTrpcLinks = () => {
   const opts = {
     transformer: SuperJSON,
-    url: getBaseUrl() + '/api/trpc',
+    url: getBaseUrl() + trpcEndpoint,
   }
   return [
     loggerLink({
