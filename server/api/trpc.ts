@@ -8,6 +8,7 @@
  */
 import { getAuthUser } from '@hono/auth-js'
 import { initTRPC, TRPCError } from '@trpc/server'
+import { type CreateFastifyContextOptions } from '@trpc/server/adapters/fastify'
 import type { Context } from 'hono'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
@@ -26,14 +27,19 @@ import type { UserId } from '~server/db/ids'
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (c: Context) => {
-  const authUser = await getAuthUser(c)
+// export const createTRPCContext = async (c: Context) => {
+//   const authUser = await getAuthUser(c)
 
-  return {
-    c,
-    db,
-    session: authUser?.session,
-  }
+//   return {
+//     c,
+//     db,
+//     session: authUser?.session,
+//   }
+// }
+
+export function createTRPCContext({ req, res }: CreateFastifyContextOptions) {
+  const user = { name: req.headers.username ?? 'anonymous' }
+  return { req, res, user }
 }
 
 /**
@@ -123,14 +129,14 @@ export const publicProcedure = t.procedure //
 export const protectedProcedure = t.procedure //
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
+    if (!ctx || !ctx.user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' })
     }
-    const user = ctx.session.user
+    const user = ctx.user
     return next({
       ctx: {
         // infers the `session` as non-nullable
-        session: { ...ctx.session, user: { ...user, id: user.id as UserId } },
+        user: ctx.user,
       },
     })
   })

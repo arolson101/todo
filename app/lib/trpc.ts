@@ -1,10 +1,11 @@
 import {
   createTRPCClient,
   createTRPCReact,
+  createWSClient,
   loggerLink,
   splitLink,
   unstable_httpBatchStreamLink,
-  unstable_httpSubscriptionLink,
+  wsLink,
 } from '@trpc/react-query'
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server'
 import SuperJSON from 'superjson'
@@ -28,10 +29,13 @@ export type RouterInputs = inferRouterInputs<AppRouter>
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>
 
+const wsClient = createWSClient({
+  url: `${getWsUrl()}api/trpc`,
+})
+
 export const getTrpcLinks = () => {
   const opts = {
     transformer: SuperJSON,
-    url: getBaseUrl() + '/api/trpc',
   }
   return [
     loggerLink({
@@ -39,10 +43,9 @@ export const getTrpcLinks = () => {
     }),
 
     splitLink({
-      // uses the httpSubscriptionLink for subscriptions
       condition: (op) => op.type === 'subscription',
-      true: unstable_httpSubscriptionLink(opts),
-      false: unstable_httpBatchStreamLink(opts),
+      true: wsLink({ ...opts, client: wsClient }),
+      false: unstable_httpBatchStreamLink({ ...opts, url: `${getBaseUrl()}/api/trpc` }),
     }),
   ]
 }
@@ -51,6 +54,13 @@ function getBaseUrl() {
   if (typeof window !== 'undefined') return window.location.origin
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 3000}`
+}
+
+function getWsUrl() {
+  const url = new URL(getBaseUrl())
+  url.protocol = url.protocol === 'https' ? 'wss' : 'ws'
+  url.port = '3001'
+  return url.toString()
 }
 
 export const client = createTRPCClient<AppRouter>({
