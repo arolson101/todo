@@ -2,7 +2,6 @@ import { TRPCError } from '@trpc/server'
 import { observable } from '@trpc/server/observable'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { db } from '~server/db/db'
 import { ChangeId, SourceId, UserId } from '~server/db/ids'
 import * as schema from '~server/db/schema'
 import { Change, ChangeValues } from '~server/db/types'
@@ -53,7 +52,7 @@ export const changeRouter = createTRPCRouter({
           sourceId,
           userId,
         })) satisfies Array<ChangeValues>
-        const ret = await db //
+        const ret = await ctx.db //
           .insert(schema.changes)
           .values(values)
       }
@@ -78,7 +77,7 @@ export const changeRouter = createTRPCRouter({
         changeId = null
       }
       const userId = UserId.parse(ctx.session.user.id)
-      const changes = await db.query.changes //
+      const changes = await ctx.db.query.changes //
         .findMany({
           where: (change, { eq, and, gt, ne }) =>
             and(

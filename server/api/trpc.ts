@@ -11,7 +11,6 @@ import { initTRPC, TRPCError } from '@trpc/server'
 import type { Context } from 'hono'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
-import { db } from '~server/db/db'
 import type { UserId } from '~server/db/ids'
 
 /**
@@ -28,6 +27,7 @@ import type { UserId } from '~server/db/ids'
  */
 export const createTRPCContext = async (c: Context) => {
   const authUser = await getAuthUser(c)
+  const db = c.get('db')
 
   return {
     c,

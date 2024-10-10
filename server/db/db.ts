@@ -1,10 +1,10 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
-import { env } from '~server/env'
+import type { Environment } from '~server/env'
 import * as schema from './schema'
 
-async function runMigrations() {
+async function runMigrations(env: Environment) {
   console.log('applying migrations...')
   const migrationClient = postgres(env.DATABASE_URL, { max: 1 })
   await migrate(drizzle(migrationClient), { migrationsFolder: './drizzle' })
@@ -12,21 +12,16 @@ async function runMigrations() {
   console.log('migrations applied')
 }
 
-// await runMigrations()
+export async function connectDb(env: Environment) {
+  // await runMigrations(env)
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
-const globalForDb = globalThis as unknown as {
-  conn: postgres.Sql | undefined
+  const conn = postgres(env.DATABASE_URL)
+  const db = drizzle(conn, {
+    schema, //
+    // logger: env.NODE_ENV !== 'production',
+  })
+
+  return db
 }
 
-export const conn = globalForDb.conn ?? postgres(env.DATABASE_URL)
-if (env.NODE_ENV !== 'production') globalForDb.conn = conn
-
-export const db = drizzle(conn, {
-  schema, //
-  // logger: env.NODE_ENV !== 'production',
-})
-export type DbType = typeof db
+export type DbType = Awaited<ReturnType<typeof connectDb>>

@@ -7,15 +7,21 @@ import { trpcEndpoint } from '~shared/identity'
 import { appRouter } from './api'
 import { createTRPCContext } from './api/trpc'
 import { getAuthConfig } from './auth/config'
-import { type Environment } from './env'
+import { dbMiddleware } from './db/db-middleware'
+import { env, envMiddleware } from './env'
 
-const app = new Hono<Environment>()
+const app = new Hono()
 
-if (process.env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'development') {
   app.use('*', logger())
 }
 
-app.use('*', initAuthConfig(getAuthConfig))
+app.use(
+  '*', // middleware must be in this order
+  envMiddleware,
+  dbMiddleware,
+  initAuthConfig(getAuthConfig),
+)
 app.use('/api/auth/*', authHandler())
 
 app.use(
