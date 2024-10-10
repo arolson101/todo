@@ -1,6 +1,6 @@
-import { authHandler } from '@hono/auth-js'
-import { initAuthConfig } from '@hono/auth-js'
+import { authHandler, verifyAuth } from '@hono/auth-js'
 import { trpcServer } from '@hono/trpc-server'
+import { renderTrpcPanel } from '@metamorph/trpc-panel'
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { appRouter } from './api'
@@ -14,10 +14,7 @@ if (env.NODE_ENV === 'development') {
   app.use('*', logger())
 }
 
-app.use(
-  '*',
-  initAuthConfig(() => authConfig),
-)
+app.use('*', authConfig)
 app.use('/api/auth/*', authHandler())
 
 app.use(

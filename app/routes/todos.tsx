@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PageHeader } from '~/components/page-header'
@@ -9,7 +8,6 @@ import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Todo } from '~/db/types'
-import { api } from '~/lib/trpc'
 import { storage } from '~/services/storage'
 
 export const Route = createFileRoute('/todos')({
@@ -42,21 +40,12 @@ function TodosPage() {
     form.reset()
   }
 
-  const [test, setTest] = useState(-1)
-
-  api.changes.stream.useSubscription(undefined, {
-    onData(data) {
-      setTest(data)
-    },
-  })
-
   return (
     <>
       <PageHeader title='Todos' />
 
       <div className='p-2'>
         <p>Todos:</p>
-        <p>Random number: {test}</p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <div className='flex flex-row items-center'>

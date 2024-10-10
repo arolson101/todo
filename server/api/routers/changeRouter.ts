@@ -32,18 +32,15 @@ export const changeRouter = createTRPCRouter({
 
   stream: publicProcedure //
     .subscription(async function* (opts) {
-      try {
-        let i = 0
-        let aborted = false
-        while (true) {
-          i++
-          console.log('stream', i)
-          yield i
-          await delay(1000)
-        }
-      } finally {
-        console.log('finalized')
+      let i = 0
+      let aborted = false
+      while (!opts.ctx.c.req.raw.signal.aborted) {
+        i++
+        console.log('stream', i)
+        yield i
+        await delay(1000)
       }
+      console.log('finalized')
     }),
 
   send: protectedProcedure //
