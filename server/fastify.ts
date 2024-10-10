@@ -1,7 +1,6 @@
 import FastifyVite from '@fastify/vite'
 import ws from '@fastify/websocket'
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from '@trpc/server/adapters/fastify'
-import { createHandler, createMiddleware } from '@universal-middleware/fastify'
 import fastify from 'fastify'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -19,15 +18,6 @@ const app = fastify({
   logger: true,
   maxParamLength: 5000,
 })
-
-// Avoid pre-parsing body, otherwise it will cause issue with universal handlers
-// This will probably change in the future though, you can follow https://github.com/magne4000/universal-middleware for updates
-app.removeAllContentTypeParsers()
-app.addContentTypeParser('*', function (_request, _payload, done) {
-  done(null, '')
-})
-
-await app.register(await import('@fastify/middie'))
 
 if (process.env.NODE_ENV === 'production') {
   await app.register(await import('@fastify/static'), {
@@ -47,25 +37,25 @@ if (process.env.NODE_ENV === 'production') {
     logLevel: 'debug'
   })
 
-  app.get('/', (req, reply) => {
+  app.get('*', (req, reply) => {
     return reply.html()
   })
 
-  // console.log('waiting for vite')
+  console.log('waiting for vite')
   await app.vite.ready()
-  // console.log('vite ready')
+  console.log('vite ready')
 }
 // await server.register(require('@fastify/express'))
 
 // server.use('/auth/*', ExpressAuth(getAuthConfig()))
 
-await app.register(createMiddleware(authjsSessionMiddleware)())
+// await app.register(createMiddleware(authjsSessionMiddleware)())
 
 /**
  * Auth.js route
  * @link {@see https://authjs.dev/getting-started/installation}
  **/
-app.all('/api/auth/*', createHandler(authjsHandler)())
+// app.all('/api/auth/*', createHandler(authjsHandler)())
 
 await app.register(ws)
 

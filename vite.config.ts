@@ -8,6 +8,7 @@ import { htmlTitle } from './shared/identity'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  root: '.',
   plugins: [
     tsconfigPaths(),
     TanStackRouterVite(),
