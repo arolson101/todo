@@ -32,7 +32,7 @@ export const authConfig = {
     error: console.error,
   },
   // debug: c.env.NODE_ENV === 'development',
-}
+} satisfies AuthConfig
 
 /**
  * Retrieve Auth.js session from Request
@@ -40,7 +40,7 @@ export const authConfig = {
 export async function getSession(req: Request, config: Omit<AuthConfig, 'raw'>): Promise<Session | null> {
   setEnvDefaults(process.env, config)
   const requestURL = new URL(req.url)
-  const url = createActionURL('session', requestURL.protocol, req.headers, process.env, config)
+  const url = createActionURL('session', requestURL.protocol, req.headers, process.env, config.basePath)
 
   const response = await Auth(new Request(url, { headers: { cookie: req.headers.get('cookie') ?? '' } }), config)
 
