@@ -1,11 +1,8 @@
-import { TRPCError } from '@trpc/server'
 import { observable } from '@trpc/server/observable'
-import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { ChangeId, SourceId, UserId } from '~server/db/ids'
 import * as schema from '~server/db/schema'
-import { Change, ChangeValues } from '~server/db/types'
-import { zAsyncGenerator } from '~server/util/zAsyncGenerator'
+import { ChangeValues } from '~server/db/types'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 function delay(t: number) {
@@ -31,15 +28,18 @@ export const changeRouter = createTRPCRouter({
 
   stream: publicProcedure //
     .subscription(async function* (opts) {
-      let i = 0
-      let aborted = false
-      while (!opts.ctx.c.req.raw.signal.aborted) {
-        i++
-        console.log('stream', i)
-        yield i
-        await delay(1000)
+      try {
+        let i = 0
+        let aborted = false
+        while (true) {
+          i++
+          console.log('stream', i)
+          yield i
+          await delay(1000)
+        }
+      } finally {
+        console.log('finalized')
       }
-      console.log('finalized')
     }),
 
   send: protectedProcedure //

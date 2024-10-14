@@ -6,11 +6,11 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { getAuthUser } from '@hono/auth-js'
+import type { Session } from '@auth/core/types'
 import { initTRPC, TRPCError } from '@trpc/server'
-import type { Context } from 'hono'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
+import type { DbType } from '~server/db/db'
 import type { UserId } from '~server/db/ids'
 
 /**
@@ -25,15 +25,9 @@ import type { UserId } from '~server/db/ids'
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (c: Context) => {
-  const authUser = await getAuthUser(c)
-  const db = c.get('db')
-
-  return {
-    c,
-    db,
-    session: authUser?.session,
-  }
+export type TRPCContext = {
+  db: DbType
+  session: Session | undefined
 }
 
 /**
@@ -43,7 +37,7 @@ export const createTRPCContext = async (c: Context) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<TRPCContext>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {

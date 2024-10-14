@@ -1,6 +1,4 @@
 import { createEnv } from '@t3-oss/env-core'
-import { env as hono_env } from 'hono/adapter'
-import { createMiddleware } from 'hono/factory'
 import { z } from 'zod'
 
 export const env = createEnv({
@@ -38,14 +36,3 @@ export const env = createEnv({
 })
 
 export type Environment = typeof env
-
-declare module 'hono' {
-  interface ContextVariableMap {
-    env: Environment
-  }
-}
-
-export const envMiddleware = createMiddleware(async (c, next) => {
-  c.set('env', env)
-  await next()
-})

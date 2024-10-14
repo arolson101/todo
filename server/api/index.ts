@@ -1,3 +1,7 @@
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
+import type { Get, UniversalHandler } from '@universal-middleware/core'
+import { db } from '~server/db/db'
+import { trpcEndpoint } from '~shared/identity'
 import { changeRouter } from './routers/changeRouter'
 import { createCallerFactory, createTRPCRouter } from './trpc'
 
@@ -21,3 +25,21 @@ export type AppRouter = typeof appRouter
  *       ^? Post[]
  */
 export const createCaller = createCallerFactory(appRouter)
+
+export const trpcHandler = ((endpoint) => (request, context, runtime) => {
+  return fetchRequestHandler({
+    endpoint,
+    req: request,
+    router: appRouter,
+    createContext({ req, resHeaders }) {
+      return {
+        session: undefined, // session is in context
+        ...context,
+        ...runtime,
+        req,
+        resHeaders,
+        db,
+      }
+    },
+  })
+}) satisfies Get<[endpoint: string], UniversalHandler>
