@@ -5,13 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      // not working on windows yet - see https://github.com/oven-sh/bun/issues/8851
-      "type": "bun",
+      "name": "dev",
       "request": "launch",
-      "name": "Debug Server",
-      "program": "server/serve-bun.ts",
-      "runtimeArgs": ["--port", "3001"],
-      "watchMode": "hot"
+      "runtimeArgs": ["run-script", "dev"],
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
     },
     {
       "type": "chrome",

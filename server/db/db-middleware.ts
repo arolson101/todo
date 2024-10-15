@@ -1,4 +1,5 @@
 import { createMiddleware } from 'hono/factory'
+import type { Environment } from '~server/env'
 import { connectDb, type DbType } from './db'
 
 declare module 'hono' {
@@ -7,9 +8,11 @@ declare module 'hono' {
   }
 }
 
-export const dbMiddleware = createMiddleware(async (c, next) => {
-  const env = c.get('env')
+export const dbMiddleware = async (env: Environment) => {
   const db = await connectDb(env)
-  c.set('db', db)
-  await next()
-})
+
+  return createMiddleware(async (c, next) => {
+    c.set('db', db)
+    await next()
+  })
+}

@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import postgres from 'postgres'
-import type { Environment } from '~server/env'
+import { env, type Environment } from '~server/env'
 import * as schema from './schema'
 
 async function runMigrations(env: Environment) {

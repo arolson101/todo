@@ -1,14 +1,12 @@
-import { authHandler } from '@hono/auth-js'
-import { initAuthConfig } from '@hono/auth-js'
-import { trpcServer } from '@hono/trpc-server'
-import { Hono } from 'hono'
+import { authHandler, initAuthConfig } from '@hono/auth-js'
+import { type Context, Hono } from 'hono'
 import { logger } from 'hono/logger'
-import { trpcEndpoint } from '~shared/identity'
-import { appRouter } from './api'
-import { createTRPCContext } from './api/trpc'
+import { stream, streamSSE, streamText } from 'hono/streaming'
+import type { BlankEnv, BlankInput } from 'hono/types'
+import changes from './api/changes'
 import { getAuthConfig } from './auth/config'
 import { dbMiddleware } from './db/db-middleware'
-import { env, envMiddleware } from './env'
+import { env, type Environment, envMiddleware } from './env'
 
 const app = new Hono()
 
@@ -19,28 +17,12 @@ if (env.NODE_ENV === 'development') {
 app.use(
   '*', // middleware must be in this order
   envMiddleware,
-  dbMiddleware,
+  await dbMiddleware(env),
   initAuthConfig(getAuthConfig),
 )
 app.use('/api/auth/*', authHandler())
 
-app.use(
-  `${trpcEndpoint}/*`,
-  trpcServer({
-    endpoint: trpcEndpoint,
-    router: appRouter,
-    createContext: (_opts, c) => createTRPCContext(c),
-    onError(opts) {
-      const { error, type, path, input, ctx, req } = opts
-      console.error('Error:', error)
-    },
-  }),
-)
-
-// if (env.NODE_ENV === 'development') {
-//   app.use('/api/panel', async (c) =>
-//     c.html(renderTrpcPanel(appRouter, { url: 'http://localhost:3000/api/trpc', transformer: 'superjson' })),
-//   )
-// }
+const apiRoute = app.route('/api/changes', changes)
 
 export default app
+export type AppType = typeof apiRoute
