@@ -3,11 +3,13 @@ import Github from '@auth/core/providers/github'
 import { DrizzleAdapter } from '@auth/drizzle-adapter'
 import type { Context } from 'hono'
 import * as tables from '~server/db/schema/auth'
+import { authEndpoint } from '~shared/identity'
 
 export function getAuthConfig(c: Context) {
   const db = c.get('db')
   const env = c.get('env')
   return {
+    basePath: authEndpoint,
     adapter: DrizzleAdapter(db, {
       usersTable: tables.users,
       accountsTable: tables.accounts,

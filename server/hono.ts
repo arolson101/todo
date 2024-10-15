@@ -3,6 +3,7 @@ import { type Context, Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { stream, streamSSE, streamText } from 'hono/streaming'
 import type { BlankEnv, BlankInput } from 'hono/types'
+import { authEndpoint } from '~shared/identity'
 import changes from './api/changes'
 import { getAuthConfig } from './auth/config'
 import { dbMiddleware } from './db/db-middleware'
@@ -20,7 +21,7 @@ app.use(
   await dbMiddleware(env),
   initAuthConfig(getAuthConfig),
 )
-app.use('/api/auth/*', authHandler())
+app.use(`${authEndpoint}/*`, authHandler())
 
 const apiRoute = app.route('/api/changes', changes)
 
