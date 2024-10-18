@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { nanoid } from 'nanoid'
+import { eq } from 'drizzle-orm'
 import { useState } from 'react'
-import { db } from '~/db/db'
+import { appDb, schema } from '~/db'
 import { TodoId } from '~/db/ids'
 import { Todo } from '~/db/types'
 
@@ -41,33 +41,40 @@ function mutation<T>(fcn: (t: T) => Promise<any>) {
 export const storage = {
   todo: {
     all: liveQuery(async () => {
-      return await db.todos //
-        .where('deleted')
-        .notEqual(1)
-        .toArray()
+      return await appDb.query.todos //
+        .findMany({
+          where: (todo, { eq }) => eq(todo.deleted, false),
+        })
     }),
 
     create: mutation<string>(async (title) => {
       console.log('create', { title })
-      const res = await db.todos.add({
-        id: TodoId.parse(nanoid()),
-        deleted: 0,
-        title,
-        completed: false,
-      })
-      console.log('create returned', { res })
+      const res = await appDb //
+        .insert(schema.todos)
+        .values({ title })
 
+      console.log('create returned', { res })
     }),
 
     setCompleted: mutation<{
       id: TodoId //
       completed: Todo['completed']
     }>(async ({ id, completed }) => {
-      await db.todos.update(id, { completed })
+      const res = await appDb //
+        .update(schema.todos)
+        .set({ completed })
+        .where(eq(schema.todos.id, id))
+
+      console.log('setCompleted returned', { res })
     }),
 
     remove: mutation<TodoId>(async (id) => {
-      await db.todos.update(id, { deleted: 1 })
+      const res = await appDb //
+        .update(schema.todos)
+        .set({ deleted: true })
+        .where(eq(schema.todos.id, id))
+
+      console.log('remove returned', { res })
     }),
   },
 }

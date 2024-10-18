@@ -1,8 +1,14 @@
-import * as native from './sqlite.native'
-import * as web from './sqlite.web'
+import { createClient } from '@libsql/client-wasm'
+import { drizzle } from 'drizzle-orm/libsql'
+import migrations from './drizzle/migrations'
+import { migrate } from './migrator'
+import * as schema from './schema'
 
-declare var _test: typeof native
-declare var _test: typeof web
+const client = createClient({ url: 'file::localStorage:' })
+export const appDb = drizzle(client, { schema })
+export type AppDbType = typeof appDb
 
-/// export to get the shape of the module
-export * from './sqlite.web'
+await migrate(appDb, migrations) //
+  .catch((reason) => {
+    console.error(reason.cause, reason)
+  })

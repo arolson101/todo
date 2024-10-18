@@ -1,11 +1,9 @@
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import { z } from 'zod'
 import { TodoId } from '~/db/ids'
+import * as schema from './schema'
 
-export type TodoInput = {
-  completed: boolean
-  title: string
-}
-
-export type Todo = TodoInput & {
-  id: TodoId
-  deleted: 0 | 1
-}
+export const Todo = createSelectSchema(schema.todos, { id: TodoId })
+export type Todo = z.infer<typeof Todo>
+export const TodoValues = createInsertSchema(schema.todos).omit({ id: true })
+export type TodoValues = z.infer<typeof TodoValues>

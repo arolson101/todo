@@ -1,10 +1,9 @@
 // https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/libsql/migrator.ts
 // https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/op-sqlite/migrator.ts
 import type { MigrationMeta } from 'drizzle-orm/migrator'
-import { sql } from 'drizzle-orm/sql'
-import { SqliteType } from './sqlite-type'
-import * as schema from './schema'
 import { OPSQLiteDatabase } from 'drizzle-orm/op-sqlite'
+import { sql } from 'drizzle-orm/sql'
+import * as schema from './schema'
 
 interface MigrationConfig {
   journal: {
@@ -24,7 +23,7 @@ function readMigrationFiles({ journal, migrations }: MigrationConfig): Migration
     }
 
     try {
-      const result = query.split('--> statement-breakpoint').map(it => {
+      const result = query.split('--> statement-breakpoint').map((it) => {
         return it
       })
 
@@ -53,13 +52,13 @@ export async function migrate(db: OPSQLiteDatabase<typeof schema>, config: Migra
 			created_at numeric
 		)
 	`
-  const x = await db.run(migrationTableCreate)
+  await db.run(migrationTableCreate)
 
   const dbMigrations = await db.values<[number, string, string]>(
     sql`SELECT id, hash, created_at FROM ${sql.identifier(migrationsTable)} ORDER BY created_at DESC LIMIT 1`,
   )
 
-  await db.transaction(async tx => {
+  await db.transaction(async (tx) => {
     const lastDbMigration = dbMigrations[0] ?? undefined
 
     for (const migration of migrations) {
