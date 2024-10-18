@@ -61,7 +61,7 @@ export function getAuthConfig(c: Context) {
       signOut: '/signout',
     },
     logger: {
-      debug: console.log,
+      // debug: console.log,
       warn: console.warn,
       error: console.error,
     },

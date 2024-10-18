@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import plainText from 'vite-plugin-plain-text'
 import { sri } from 'vite-plugin-sri3'
+import topLevelAwait from 'vite-plugin-top-level-await'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { htmlTitle } from './shared/identity'
 
@@ -17,6 +18,7 @@ export default defineConfig({
         plugins: ['babel-plugin-react-compiler'],
       },
     }),
+    topLevelAwait(),
     createHtmlPlugin({
       minify: true,
       entry: 'app/index.tsx',
