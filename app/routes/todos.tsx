@@ -8,7 +8,7 @@ import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Todo } from '~/db/types'
-import { storage } from '~/services/storage'
+import { useAppStore } from '~/store'
 
 export const Route = createFileRoute('/todos')({
   // beforeLoad({ context: { sessionRef } }) {
@@ -25,8 +25,8 @@ const formSchema = z.object({
 })
 
 function TodosPage() {
-  const todos = storage.todo.all.useLiveQuery()
-  const addTodo = storage.todo.create.useMutation()
+  const todos = useAppStore((state) => state.todos)
+  const createTodo = useAppStore((state) => state.createTodo)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,8 +35,8 @@ function TodosPage() {
     },
   })
 
-  async function onSubmit({ title }: z.infer<typeof formSchema>) {
-    await addTodo.mutateAsync(title)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await createTodo(values)
     form.reset()
   }
 
@@ -71,22 +71,24 @@ function TodosPage() {
 }
 
 function TodoItem({ todo }: { todo: Todo }) {
-  const setCompleted = storage.todo.setCompleted.useMutation()
-  const setDeleted = storage.todo.remove.useMutation()
-
-  async function onCompletedChange(completed: boolean) {
-    setCompleted.mutateAsync({ id: todo.id, completed })
-  }
-
-  async function onRemoveClick() {
-    setDeleted.mutateAsync(todo.id)
-  }
+  const setTodoCompleted = useAppStore((s) => s.setTodoCompleted)
+  const removeTodo = useAppStore((s) => s.removeTodo)
 
   return (
     <li className='flex items-center gap-2'>
-      <Checkbox checked={todo.completed} onCheckedChange={onCompletedChange} disabled={setCompleted.isPending} />
+      <Checkbox
+        checked={todo.completed}
+        onCheckedChange={(completed: boolean) => {
+          setTodoCompleted(todo.id, completed)
+        }}
+      />
       {todo.title}
-      <Button variant='link' onClick={onRemoveClick} disabled={setDeleted.isPending}>
+      <Button
+        variant='link'
+        onClick={() => {
+          removeTodo(todo.id)
+        }}
+      >
         X
       </Button>
     </li>
