@@ -50,22 +50,6 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-        /**
-         * Fix SSE close events
-         * @link https://github.com/chimurai/http-proxy-middleware/issues/678
-         * @link https://github.com/http-party/node-http-proxy/issues/1520#issue-877626125
-         */
-        configure: (proxy, _options) => {
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            // console.log('proxyReq')
-            res.on('close', () => {
-              console.log('close')
-              if (!res.writableEnded) {
-                proxyReq.destroy()
-              }
-            })
-          })
-        },
       },
     },
     headers: {
