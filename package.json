@@ -76,7 +76,6 @@
     "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.53.0",
     "react-icons": "^5.3.0",
-    "react-yjs": "^2.0.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",

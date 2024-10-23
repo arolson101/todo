@@ -8,8 +8,7 @@ import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { Todo } from '~/db/types'
-import { useAppStore, useAppStoreY, useY } from '~/store'
-import { YTodo } from '~/store/slices/todo-list-slice'
+import { useAppStore } from '~/store'
 
 export const Route = createFileRoute('/todos')({
   // beforeLoad({ context: { sessionRef } }) {
@@ -26,9 +25,9 @@ const formSchema = z.object({
 })
 
 function TodosPage() {
-  const todoIds = useAppStoreY(state => state.currentList.items)
-  const todos = useAppStore(state => state.currentList.todos)
-  const createTodo = useAppStore(state => state.createTodo)
+  const todoIds = useAppStore((state) => state.currentList.items)
+  const todos = useAppStore((state) => state.currentList.todos)
+  const createTodo = useAppStore((state) => state.createTodo)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,19 +65,18 @@ function TodosPage() {
             </div>
           </form>
         </Form>
-        <ul>{todoIds?.map(todoId => <TodoItem key={todoId} todo={todos[todoId]} />)}</ul>
+        <ul>{todoIds?.map((todoId) => <TodoItem key={todoId} todo={todos[todoId]} />)}</ul>
       </div>
     </>
   )
 }
 
-function TodoItem({ todo }: { todo: YTodo }) {
+function TodoItem({ todo }: { todo: Todo }) {
   if (!todo) {
     return null
   }
-  const setTodoCompleted = useAppStore(s => s.setTodoCompleted)
-  const removeTodo = useAppStore(s => s.removeTodo)
-  const title = useY(todo.title)
+  const setTodoCompleted = useAppStore((s) => s.setTodoCompleted)
+  const removeTodo = useAppStore((s) => s.removeTodo)
 
   return (
     <li className='flex items-center gap-2'>
@@ -88,7 +86,7 @@ function TodoItem({ todo }: { todo: YTodo }) {
           setTodoCompleted(todo.id, completed)
         }}
       />
-      {title}
+      {todo.title}
       <Button
         variant='link'
         onClick={() => {

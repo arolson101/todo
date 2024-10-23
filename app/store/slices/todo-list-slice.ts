@@ -4,24 +4,22 @@ import * as Y from 'yjs'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
-import { TodoValues } from '~/db/types'
+import { Todo, TodoValues } from '~/db/types'
 
 export type YTodoList = {
   ydoc: Y.Doc
+  ymap: Y.Map<any>
+  yname: Y.Text
+  yitems: Y.Array<TodoId>
+  ychildren: Y.Map<any>
+
   id: TodoListId
-  name: Y.Text
-  items: Y.Array<TodoId>
-  todos: Record<TodoId, YTodo>
+  name: string
+  items: TodoId[]
+  todos: Record<TodoId, Todo>
 }
 const todoListKey = (key: keyof YTodoList) => key
-
-export type YTodo = {
-  id: TodoId
-  ymap: Y.Map<TodoId | Y.Text | boolean>
-  title: Y.Text
-  completed: boolean
-}
-const todoKey = (key: keyof YTodo) => key
+const todoKey = (key: keyof Todo) => key
 
 export interface TodoListSlice {
   lists: Array<{ id: TodoListId; name: string }>
@@ -57,7 +55,10 @@ export const createTodoListSlice = await (async function init() {
       set({ currentList })
     },
 
-    async removeTodo(id: TodoId) {},
+    async removeTodo(id: TodoId) {
+      const currentList = await removeTodo(get().currentList, id)
+      set({ currentList })
+    },
   })
   return slice
 })()
@@ -70,8 +71,13 @@ async function loadLists() {
     .from(schema.todoLists)
 
   if (todoListCount === 0) {
-    const defaultTodo = createList(undefined, 'To Do')
-    await saveTodoList(defaultTodo, false)
+    const defaultTodo = createTodoList('To Do')
+    const id = defaultTodo.id
+    const name = defaultTodo.name
+    const ydoc = Y.encodeStateAsUpdateV2(defaultTodo.ydoc)
+    await appDb //
+      .insert(schema.todoLists)
+      .values({ id, name, ydoc })
   }
 
   const lists = await appDb.query.todoLists.findMany({
@@ -83,103 +89,16 @@ async function loadLists() {
   return lists
 }
 
-function createList(ydoc = new Y.Doc(), defaultName?: string): YTodoList {
+function createTodoList(defaultName?: string): YTodoList {
+  const ydoc = new Y.Doc()
+  const id = TodoListId.parse(nanoid())
   const ymap = ydoc.getMap()
-  const id = ymap.set(todoListKey('id'), TodoListId.parse(nanoid()))
-  const name = ymap.set(todoListKey('name'), new Y.Text(defaultName))
-  const items = ymap.set(todoListKey('items'), new Y.Array<TodoId>())
-  const todos = {}
-  return {
-    ydoc,
-    id,
-    name,
-    items,
-    todos,
-  }
-}
-
-async function addTodoToList(list: YTodoList, values: TodoValues) {
-  const nextList = await appDb.transaction(async tx => {
-    // update the ydoc
-    const todo = list.ydoc.transact(() => {
-      const id = TodoId.parse(nanoid())
-      const ymap = list.ydoc.getMap(id) satisfies YTodo['ymap']
-      ymap.set(todoKey('id'), id)
-      const title = ymap.set(todoKey('title'), new Y.Text(values.title))
-      const completed = ymap.set(todoKey('completed'), false)
-      const todo: YTodo = {
-        id,
-        ymap,
-        title,
-        completed,
-      }
-
-      list.items.push([id])
-      return todo
-    })
-
-    // write todo
-    tx.insert(schema.todos) //
-      .values({
-        id: todo.id,
-        listId: list.id,
-        title: todo.title.toJSON(),
-        completed: todo.completed,
-      })
-
-    // write updated crdt
-    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
-    tx.update(schema.todoLists) //
-      .set({ ydoc })
-      .where(eq(schema.todoLists.id, list.id))
-
-    const nextList = {
-      ...list,
-      todos: {
-        ...list.todos,
-        [todo.id]: todo,
-      },
-    }
-    saveTodoList(nextList, true)
-    return nextList
+  ydoc.transact(() => {
+    ymap.set(todoListKey('yname'), new Y.Text(defaultName))
+    ymap.set(todoListKey('yitems'), new Y.Array<TodoId>())
+    ymap.set(todoListKey('ychildren'), new Y.Map<any>())
   })
-  return nextList
-}
-
-async function setTodoCompleted(list: YTodoList, id: TodoId, completed: boolean) {
-  const todo = list.todos[id]
-  todo.completed = todo.ymap.set(todoKey('completed'), completed)
-
-  appDb.transaction(async tx => {
-    // write todo
-    tx.update(schema.todos) //
-      .set({ completed })
-      .where(eq(schema.todos.id, id))
-
-    // write updated crdt
-    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
-    tx.update(schema.todoLists) //
-      .set({ ydoc })
-      .where(eq(schema.todoLists.id, list.id))
-  })
-
-  return list
-}
-
-async function saveTodoList(list: YTodoList, update: boolean) {
-  const id = list.id
-  const name = list.name.toJSON() as string
-  const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
-  if (update) {
-    await appDb //
-      .update(schema.todoLists)
-      .set({ name, ydoc })
-      .where(eq(schema.todoLists.id, id))
-  } else {
-    await appDb //
-      .insert(schema.todoLists)
-      .values({ id, name, ydoc })
-  }
+  return finishTodoList(id, ydoc)
 }
 
 async function loadTodoList(id: TodoListId): Promise<YTodoList> {
@@ -196,6 +115,153 @@ async function loadTodoList(id: TodoListId): Promise<YTodoList> {
   const ydoc = new Y.Doc()
   Y.applyUpdateV2(ydoc, doc.ydoc)
 
-  const list = createList(ydoc)
-  return list
+  return finishTodoList(id, ydoc)
+}
+
+function finishTodoList(id: TodoListId, ydoc: Y.Doc): YTodoList {
+  const ymap = ydoc.getMap()
+  const yname = ymap.get(todoListKey('yname')) as Y.Text
+  const yitems = ymap.get(todoListKey('yitems')) as Y.Array<TodoId>
+  const ychildren = ymap.get(todoListKey('ychildren')) as Y.Map<any>
+
+  const name = yname.toJSON()
+  const items = yitems.toArray()
+  const todos = {} as Record<TodoId, Todo>
+  for (const todoId of items) {
+    todos[todoId] = getTodoFromDoc(ychildren, id, todoId)
+  }
+
+  return {
+    ydoc,
+    ymap,
+    yname,
+    yitems,
+    ychildren,
+
+    id,
+    name,
+    items,
+    todos,
+  }
+}
+
+function getTodoFromDoc(ychildren: Y.Map<any>, listId: TodoListId, id: TodoId): Todo {
+  console.assert(ychildren.has(id))
+  const ymap = ychildren.get(id) as Y.Map<any>
+  const title = (ymap.get(todoKey('title')) as Y.Text).toJSON()
+  const completed = ymap.get(todoKey('completed')) as Todo['completed']
+  return {
+    id,
+    listId,
+    title,
+    completed,
+  }
+}
+
+async function addTodoToList(list: YTodoList, values: TodoValues) {
+  // update the ydoc
+  const todo = list.ydoc.transact(() => {
+    const id = TodoId.parse(nanoid())
+    list.yitems.push([id])
+
+    const ymap = list.ychildren.set(id, new Y.Map())
+    const title = ymap.set(todoKey('title'), new Y.Text(values.title)).toJSON()
+    const completed = ymap.set(todoKey('completed'), false)
+    const listId = list.id
+
+    const todo: Todo = {
+      id,
+      listId,
+      title,
+      completed,
+    }
+    return todo
+  })
+
+  await appDb.transaction(async tx => {
+    // write todo
+    await tx
+      .insert(schema.todos) //
+      .values(todo)
+
+    // write updated crdt
+    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
+    await tx
+      .update(schema.todoLists) //
+      .set({ ydoc })
+      .where(eq(schema.todoLists.id, list.id))
+  })
+
+  const items = list.yitems.toArray()
+  const nextList = {
+    ...list,
+    todos: {
+      ...list.todos,
+      [todo.id]: todo,
+    },
+    items,
+  }
+
+  return nextList
+}
+
+async function setTodoCompleted(list: YTodoList, id: TodoId, completed: boolean): Promise<YTodoList> {
+  const ymap = list.ychildren.get(id) as Y.Map<any>
+  ymap.set(todoKey('completed'), completed)
+
+  await appDb.transaction(async tx => {
+    // write todo
+    await tx
+      .update(schema.todos) //
+      .set({ completed })
+      .where(eq(schema.todos.id, id))
+
+    // write updated crdt
+    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
+    await tx
+      .update(schema.todoLists) //
+      .set({ ydoc })
+      .where(eq(schema.todoLists.id, list.id))
+  })
+
+  return {
+    ...list,
+    todos: {
+      ...list.todos,
+      [id]: {
+        ...list.todos[id],
+        completed,
+      },
+    },
+  }
+}
+
+async function removeTodo(list: YTodoList, id: TodoId): Promise<YTodoList> {
+  list.ydoc.transact(() => {
+    const idx = list.yitems.toArray().indexOf(id)
+    list.yitems.delete(idx)
+    list.ychildren.delete(id)
+  })
+
+  await appDb.transaction(async tx => {
+    // remove todo
+    await tx //
+      .delete(schema.todos)
+      .where(eq(schema.todos.id, id))
+
+    // write updated crdt
+    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
+    await tx //
+      .update(schema.todoLists)
+      .set({ ydoc })
+      .where(eq(schema.todoLists.id, list.id))
+  })
+
+  const todos = { ...list.todos }
+  delete todos[id]
+
+  return {
+    ...list,
+    todos,
+  }
 }

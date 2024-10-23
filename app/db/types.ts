@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { TodoId, TodoListId } from '~/db/ids'
 import * as schema from './schema'
 
-export const Todo = createSelectSchema(schema.todos, { id: TodoId })
+export const Todo = createSelectSchema(schema.todos, { id: TodoId, listId: TodoListId })
 export type Todo = z.infer<typeof Todo>
 export const TodoValues = createInsertSchema(schema.todos).omit({ id: true, listId: true })
 export type TodoValues = z.infer<typeof TodoValues>
