@@ -19,6 +19,7 @@ const config = {
   semi: false,
   singleQuote: true,
   jsxSingleQuote: true,
+  arrowParens: 'avoid',
 }
 
 export default config

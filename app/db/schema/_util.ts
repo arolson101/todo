@@ -1,10 +1,10 @@
 import { type BuildQueryResult, type DBQueryConfig, type ExtractTablesWithRelations, sql } from 'drizzle-orm'
-import { integer, type SQLiteColumn, sqliteTableCreator, type SQLiteTableFn, text } from 'drizzle-orm/sqlite-core'
+import { blob, integer, type SQLiteColumn, sqliteTableCreator, type SQLiteTableFn, text } from 'drizzle-orm/sqlite-core'
 import { nanoid } from 'nanoid'
 import * as schema from '~server/db/schema'
 import { dbTablePrefix } from '~shared/identity'
 
-export const createTable: SQLiteTableFn = sqliteTableCreator((name) => `${dbTablePrefix}${name}`)
+export const createTable: SQLiteTableFn = sqliteTableCreator(name => `${dbTablePrefix}${name}`)
 
 // https://orm.drizzle.team/docs/column-types/sqlite
 export const _idNum = <T>(col: string) =>
@@ -19,6 +19,8 @@ export const _idNano = <T>(col: string) =>
     .primaryKey()
     .$type<T>()
     .$defaultFn(() => nanoid() as T)
+export const _array = <T>(col: string) => text(col, { mode: 'json' }).$type<Array<T>>()
+export const _blob = (col: string) => blob(col, { mode: 'buffer' }).$type<Uint8Array>()
 export const _int = (col: string) => integer(col).notNull().default(0)
 export const _text = (col: string) => text(col).notNull().default('')
 export const _bool = (col: string, dflt: boolean) => integer(col, { mode: 'boolean' }).notNull().default(dflt)
@@ -31,6 +33,8 @@ export const _timestampNow = (col: string) =>
     .default(sql`CURRENT_TIMESTAMP`)
 export const _refidNum = <T>(col: string, ref: () => SQLiteColumn) =>
   integer(col).notNull().references(ref, { onDelete: 'cascade' }).$type<T>()
+export const _refidStr = <T>(col: string, ref: () => SQLiteColumn) =>
+  text(col).notNull().references(ref, { onDelete: 'cascade' }).$type<T>()
 export const _refidUUID = <T>(col: string, ref: () => SQLiteColumn) =>
   text(col).notNull().references(ref, { onDelete: 'cascade' }).$type<T>()
 

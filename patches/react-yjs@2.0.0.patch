@@ -1,0 +1,13 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 79e5067b6a42beac905bece4f19096f6ae91c4c3..022fcf2c1172adc916fbb6424d26e51e5c5a0c5f 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -2,7 +2,7 @@ import * as Y from 'yjs';
+ 
+ type YTypeToJson<YType> = YType extends Y.Array<infer Value> ? Array<YTypeToJson<Value>> : YType extends Y.Map<infer MapValue> ? {
+     [key: string]: YTypeToJson<MapValue>;
+-} : YType extends Y.XmlFragment | Y.XmlText ? string : YType;
++} : YType extends Y.XmlFragment | Y.YText ? string : YType;
+ declare function useY<YType extends Y.AbstractType<any>>(yData: YType): YTypeToJson<YType>;
+ 
+ export { useY };

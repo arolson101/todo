@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0c899de8-23ef-493d-97bf-105ffc9bd489",
+  "id": "0f4d21b1-75f3-4d65-b438-9e677a8c7fd9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "todo_todos": {
@@ -14,11 +14,18 @@
           "notNull": true,
           "autoincrement": false
         },
+        "list_id": {
+          "name": "list_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "title": {
           "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
           "default": "''"
         },
@@ -29,6 +36,51 @@
           "notNull": true,
           "autoincrement": false,
           "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "todo_todos_list_id_todo_todo_list_id_fk": {
+          "name": "todo_todos_list_id_todo_todo_list_id_fk",
+          "tableFrom": "todo_todos",
+          "tableTo": "todo_todo_list",
+          "columnsFrom": [
+            "list_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "todo_todo_list": {
+      "name": "todo_todo_list",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ydoc": {
+          "name": "ydoc",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "''"
         },
         "deleted": {
           "name": "deleted",
