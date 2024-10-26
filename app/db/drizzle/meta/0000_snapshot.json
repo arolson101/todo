@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0f4d21b1-75f3-4d65-b438-9e677a8c7fd9",
+  "id": "1b03e541-761c-4da9-9b46-cee52927c242",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "todo_todos": {
@@ -25,7 +25,7 @@
           "name": "title",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "''"
         },
@@ -67,6 +67,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "base_doc": {
+          "name": "base_doc",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "delta": {
+          "name": "delta",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "ydoc": {
           "name": "ydoc",
           "type": "blob",
@@ -78,7 +92,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "''"
         },

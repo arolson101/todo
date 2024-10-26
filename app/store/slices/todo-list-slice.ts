@@ -4,9 +4,11 @@ import * as Y from 'yjs'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
+import { AppTx } from '~/db/sqlite'
 import { Todo, TodoValues } from '~/db/types'
 
 export type YTodoList = {
+  baseDoc: Y.Doc
   ydoc: Y.Doc
   ymap: Y.Map<any>
   yname: Y.Text
@@ -18,7 +20,7 @@ export type YTodoList = {
   items: TodoId[]
   todos: Record<TodoId, Todo>
 }
-const todoListKey = (key: keyof YTodoList) => key
+const todoListKey = (key: 'yname' | 'yitems' | 'ychildren') => key
 const todoKey = (key: keyof Todo) => key
 
 export interface TodoListSlice {
@@ -71,10 +73,10 @@ async function loadLists() {
     .from(schema.todoLists)
 
   if (todoListCount === 0) {
-    const { id, name, ydoc } = createTodoList('To Do')
+    const { id, name, ydoc, baseDoc } = createTodoList('To Do')
     await appDb //
       .insert(schema.todoLists)
-      .values({ id, name, ydoc })
+      .values({ id, name, ydoc, baseDoc })
   }
 
   const lists = await appDb.query.todoLists.findMany({
@@ -87,6 +89,7 @@ async function loadLists() {
 }
 
 function createTodoList(defaultName?: string): YTodoList {
+  const baseDoc = new Y.Doc()
   const ydoc = new Y.Doc()
   const id = TodoListId.parse(nanoid())
   const ymap = ydoc.getMap()
@@ -95,24 +98,24 @@ function createTodoList(defaultName?: string): YTodoList {
     ymap.set(todoListKey('yitems'), new Y.Array<TodoId>())
     ymap.set(todoListKey('ychildren'), new Y.Map<any>())
   })
-  return finishTodoList(id, ydoc)
+  return finishTodoList(id, ydoc, baseDoc)
 }
 
 async function loadTodoList(id: TodoListId): Promise<YTodoList> {
   const doc = await appDb.query.todoLists //
     .findFirst({
       where: (todoLists, { eq }) => eq(todoLists.id, id),
-      columns: { ydoc: true },
+      columns: { ydoc: true, baseDoc: true },
     })
 
   if (!doc) {
     throw new Error('no todo list with id ' + id)
   }
 
-  return finishTodoList(id, doc.ydoc)
+  return finishTodoList(id, doc.ydoc, doc.baseDoc)
 }
 
-function finishTodoList(id: TodoListId, ydoc: Y.Doc): YTodoList {
+function finishTodoList(id: TodoListId, ydoc: Y.Doc, baseDoc: Y.Doc): YTodoList {
   const ymap = ydoc.getMap()
   const yname = ymap.get(todoListKey('yname')) as Y.Text
   const yitems = ymap.get(todoListKey('yitems')) as Y.Array<TodoId>
@@ -127,6 +130,7 @@ function finishTodoList(id: TodoListId, ydoc: Y.Doc): YTodoList {
 
   return {
     ydoc,
+    baseDoc,
     ymap,
     yname,
     yitems,
@@ -178,11 +182,7 @@ async function addTodoToList(list: YTodoList, values: TodoValues) {
       .insert(schema.todos)
       .values(todo)
 
-    // write updated crdt
-    await tx //
-      .update(schema.todoLists)
-      .set({ ydoc: list.ydoc })
-      .where(eq(schema.todoLists.id, list.id))
+    await writeUpdatedYdoc(tx, list)
   })
 
   const items = list.yitems.toArray()
@@ -209,11 +209,7 @@ async function setTodoCompleted(list: YTodoList, id: TodoId, completed: boolean)
       .set({ completed })
       .where(eq(schema.todos.id, id))
 
-    // write updated crdt
-    await tx //
-      .update(schema.todoLists)
-      .set({ ydoc: list.ydoc })
-      .where(eq(schema.todoLists.id, list.id))
+    await writeUpdatedYdoc(tx, list)
   })
 
   return {
@@ -241,11 +237,7 @@ async function removeTodo(list: YTodoList, id: TodoId): Promise<YTodoList> {
       .delete(schema.todos)
       .where(eq(schema.todos.id, id))
 
-    // write updated crdt
-    await tx //
-      .update(schema.todoLists)
-      .set({ ydoc: list.ydoc })
-      .where(eq(schema.todoLists.id, list.id))
+    await writeUpdatedYdoc(tx, list)
   })
 
   const todos = { ...list.todos }
@@ -255,4 +247,14 @@ async function removeTodo(list: YTodoList, id: TodoId): Promise<YTodoList> {
     ...list,
     todos,
   }
+}
+
+async function writeUpdatedYdoc(tx: AppTx, list: YTodoList) {
+  const { ydoc, baseDoc } = list
+  const stateVector = Y.encodeStateVector(ydoc)
+  const delta = Y.encodeStateAsUpdateV2(baseDoc, stateVector)
+  await tx //
+    .update(schema.todoLists)
+    .set({ ydoc, delta })
+    .where(eq(schema.todoLists.id, list.id))
 }
