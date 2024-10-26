@@ -71,10 +71,7 @@ async function loadLists() {
     .from(schema.todoLists)
 
   if (todoListCount === 0) {
-    const defaultTodo = createTodoList('To Do')
-    const id = defaultTodo.id
-    const name = defaultTodo.name
-    const ydoc = Y.encodeStateAsUpdateV2(defaultTodo.ydoc)
+    const { id, name, ydoc } = createTodoList('To Do')
     await appDb //
       .insert(schema.todoLists)
       .values({ id, name, ydoc })
@@ -112,10 +109,7 @@ async function loadTodoList(id: TodoListId): Promise<YTodoList> {
     throw new Error('no todo list with id ' + id)
   }
 
-  const ydoc = new Y.Doc()
-  Y.applyUpdateV2(ydoc, doc.ydoc)
-
-  return finishTodoList(id, ydoc)
+  return finishTodoList(id, doc.ydoc)
 }
 
 function finishTodoList(id: TodoListId, ydoc: Y.Doc): YTodoList {
@@ -180,15 +174,14 @@ async function addTodoToList(list: YTodoList, values: TodoValues) {
 
   await appDb.transaction(async tx => {
     // write todo
-    await tx
-      .insert(schema.todos) //
+    await tx //
+      .insert(schema.todos)
       .values(todo)
 
     // write updated crdt
-    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
-    await tx
-      .update(schema.todoLists) //
-      .set({ ydoc })
+    await tx //
+      .update(schema.todoLists)
+      .set({ ydoc: list.ydoc })
       .where(eq(schema.todoLists.id, list.id))
   })
 
@@ -211,16 +204,15 @@ async function setTodoCompleted(list: YTodoList, id: TodoId, completed: boolean)
 
   await appDb.transaction(async tx => {
     // write todo
-    await tx
-      .update(schema.todos) //
+    await tx //
+      .update(schema.todos)
       .set({ completed })
       .where(eq(schema.todos.id, id))
 
     // write updated crdt
-    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
-    await tx
-      .update(schema.todoLists) //
-      .set({ ydoc })
+    await tx //
+      .update(schema.todoLists)
+      .set({ ydoc: list.ydoc })
       .where(eq(schema.todoLists.id, list.id))
   })
 
@@ -250,10 +242,9 @@ async function removeTodo(list: YTodoList, id: TodoId): Promise<YTodoList> {
       .where(eq(schema.todos.id, id))
 
     // write updated crdt
-    const ydoc = Y.encodeStateAsUpdateV2(list.ydoc)
     await tx //
       .update(schema.todoLists)
-      .set({ ydoc })
+      .set({ ydoc: list.ydoc })
       .where(eq(schema.todoLists.id, list.id))
   })
 
