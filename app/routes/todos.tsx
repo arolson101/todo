@@ -7,8 +7,8 @@ import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { Todo } from '~/db/types'
 import { useAppStore } from '~/store'
+import { YTodo } from '~/store/slices/todo-list'
 
 export const Route = createFileRoute('/todos')({
   // beforeLoad({ context: { sessionRef } }) {
@@ -16,7 +16,6 @@ export const Route = createFileRoute('/todos')({
   //     throw redirect({ to: '/signin', search: { error: true, redirect: window.location.href } })
   //   }
   // },
-  // loader: ({ context }) => context.trpc.todo.all.query(),
   component: TodosPage,
 })
 
@@ -25,9 +24,10 @@ const formSchema = z.object({
 })
 
 function TodosPage() {
-  const todoIds = useAppStore((state) => state.currentList.items)
-  const todos = useAppStore((state) => state.currentList.todos)
-  const createTodo = useAppStore((state) => state.createTodo)
+  const todoList = useAppStore(state => state.todoList)
+  const name = todoList.useName()
+  const todos = todoList.useTodos()
+  const createTodo = useAppStore(state => state.createTodo)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,7 +46,7 @@ function TodosPage() {
       <PageHeader title='Todos' />
 
       <div className='p-2'>
-        <p>Todos:</p>
+        <p>List: {name}</p>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <div className='flex flex-row items-center'>
@@ -65,18 +65,23 @@ function TodosPage() {
             </div>
           </form>
         </Form>
-        <ul>{todoIds?.map((todoId) => <TodoItem key={todoId} todo={todos[todoId]} />)}</ul>
+        <ul>
+          {todos.map(t => (
+            <TodoItem key={t.id} todo={t} />
+          ))}
+        </ul>
       </div>
     </>
   )
 }
 
-function TodoItem({ todo }: { todo: Todo }) {
+function TodoItem({ todo }: { todo: YTodo }) {
   if (!todo) {
     return null
   }
-  const setTodoCompleted = useAppStore((s) => s.setTodoCompleted)
-  const removeTodo = useAppStore((s) => s.removeTodo)
+  todo.useValues()
+  const setTodoCompleted = useAppStore(s => s.setTodoCompleted)
+  const removeTodo = useAppStore(s => s.removeTodo)
 
   return (
     <li className='flex items-center gap-2'>
