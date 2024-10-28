@@ -9,14 +9,14 @@ import { zAsyncGenerator } from '~server/util/zAsyncGenerator'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 function delay(t: number) {
-  return new Promise((resolve) => setTimeout(resolve, t))
+  return new Promise(resolve => setTimeout(resolve, t))
 }
 
 export const changeRouter = createTRPCRouter({
   randomNumber: publicProcedure //
     .subscription(() => {
       let i = 0
-      return observable<number>((emit) => {
+      return observable<number>(emit => {
         const int = setInterval(() => {
           i++
           console.log('randomNumber', i)
@@ -47,7 +47,7 @@ export const changeRouter = createTRPCRouter({
     .query(async ({ input: { sourceId, changes }, ctx }) => {
       if (changes.length > 0) {
         const userId = UserId.parse(ctx.session.user.id)
-        const values = changes.map((change) => ({
+        const values = changes.map(change => ({
           change,
           sourceId,
           userId,
@@ -59,7 +59,7 @@ export const changeRouter = createTRPCRouter({
     }),
 
   streamChanges: protectedProcedure //
-    .input(z.object({ sourceId: SourceId, changeId: ChangeId.nullable() }))
+    .input(z.object({ sourceId: SourceId }))
     .output(
       // zAsyncGenerator({
       // yield:
@@ -71,18 +71,15 @@ export const changeRouter = createTRPCRouter({
       ),
       // }),
     )
-    .query(async ({ input: { changeId, sourceId }, ctx }) => {
-      console.log('subscription called', { changeId, sourceId })
-      if (changeId === -Infinity) {
-        changeId = null
-      }
+    .query(async ({ input: { sourceId }, ctx }) => {
+      console.log('subscription called', { sourceId })
       const userId = UserId.parse(ctx.session.user.id)
       const changes = await ctx.db.query.changes //
         .findMany({
           where: (change, { eq, and, gt, ne }) =>
             and(
               eq(change.userId, userId), //
-              gt(change.changeId, changeId ?? 0),
+              // gt(change.changeId, changeId ?? 0),
               ne(change.sourceId, sourceId),
             ),
           columns: { changeId: true, change: true },

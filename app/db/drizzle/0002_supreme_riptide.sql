@@ -1,0 +1,1 @@
+ALTER TABLE `todo_todo_list` ADD `base_doc` blob;

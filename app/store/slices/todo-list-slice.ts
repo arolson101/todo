@@ -3,6 +3,7 @@ import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
 import { TodoValues } from '~/db/types'
+import { onUpdateV2, syncDb } from './sync'
 import { YTodoList } from './todo-list'
 
 export interface TodoListSlice {
@@ -57,7 +58,7 @@ async function loadLists() {
     const { id, name, ydoc } = list
     await appDb //
       .insert(schema.todoLists)
-      .values({ id, name, ydoc, baseDoc: ydoc })
+      .values({ id, name, ydoc })
   }
 
   const lists = await appDb.query.todoLists.findMany({
@@ -79,38 +80,6 @@ async function loadTodoList(id: TodoListId) {
   }
 
   const todoList = new YTodoList(res.ydoc)
-  todoList.ydoc.on('updateV2', async () => {
-    await appDb.transaction(async tx => {
-      // update list
-      {
-        const { name, ydoc } = todoList
-        await tx //
-          .update(schema.todoLists)
-          .set({ name, ydoc })
-          .where(eq(schema.todoLists.id, id))
-      }
-
-      // upsert todos
-      for (const { id, useValues, ...set } of todoList.todos) {
-        await tx //
-          .insert(schema.todos)
-          .values({ id, ...set })
-          .onConflictDoUpdate({
-            target: schema.todos.id,
-            set,
-          })
-      }
-
-      // remove orphaned todos
-      await tx //
-        .delete(schema.todos)
-        .where(
-          notInArray(
-            schema.todos.id,
-            todoList.todos.map(todo => todo.id),
-          ),
-        )
-    })
-  })
+  todoList.ydoc.on('updateV2', onUpdateV2(todoList))
   return todoList
 }
