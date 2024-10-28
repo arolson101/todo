@@ -2,17 +2,24 @@ import { useY } from 'react-yjs'
 import * as Y from 'yjs'
 
 export type YProxy<T> = {
+  [Key in keyof T]: T[Key]
+} & {
   useValues(): T
 }
 
-export function yproxy<T>(obj: Partial<T>, keys: Array<keyof T & string>, ymap: Y.Map<any>): T & YProxy<T> {
+// TODO: the typings on this could be improved
+export function yproxy<T extends {}>(
+  obj: Partial<T>, //
+  keys: Array<keyof T & string>,
+  ymap: Y.Map<any>,
+): YProxy<T> {
   const ret = {
     ...obj,
     useValues() {
       useY(ymap)
       return ret
     },
-  } as T & YProxy<T>
+  } as YProxy<T>
 
   for (const key of keys) {
     Object.defineProperty(ret, key, {
@@ -25,5 +32,5 @@ export function yproxy<T>(obj: Partial<T>, keys: Array<keyof T & string>, ymap: 
       enumerable: true,
     })
   }
-  return ret as T & YProxy<T>
+  return ret
 }

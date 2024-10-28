@@ -25,6 +25,7 @@ export const createTodoListSlice = await (async function init() {
 
     async loadTodoList(id: TodoListId) {
       const todoList = await loadTodoList(id)
+      get().todoList?.destroy()
       set({ todoList })
     },
 
@@ -90,7 +91,7 @@ async function loadTodoList(id: TodoListId) {
       }
 
       // upsert todos
-      for (const { id, ...set } of todoList.todos) {
+      for (const { id, useValues, ...set } of todoList.todos) {
         await tx //
           .insert(schema.todos)
           .values({ id, ...set })

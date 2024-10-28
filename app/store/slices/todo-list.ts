@@ -5,6 +5,13 @@ import { TodoId, TodoListId } from '~/db/ids'
 import { Todo, TodoValues } from '~/db/types'
 import { YProxy, yproxy } from './yproxy'
 
+export type YTodo = YProxy<Todo>
+
+function todoFactory(id: TodoId, listId: TodoListId, ymap: Y.Map<any>): YTodo {
+  const t = yproxy<YTodo>({ id, listId }, ['title', 'completed'], ymap)
+  return t
+}
+
 export class YTodoList {
   #ydoc: Y.Doc
   #id: TodoListId
@@ -79,10 +86,8 @@ export class YTodoList {
   useName() {
     return useY(this.#name)
   }
-}
 
-export type YTodo = Todo & YProxy<Todo>
-
-function todoFactory(id: TodoId, listId: TodoListId, ymap: Y.Map<any>): YTodo {
-  return yproxy<YTodo>({ id, listId }, ['title', 'completed'], ymap)
+  destroy() {
+    this.#ydoc.destroy()
+  }
 }
