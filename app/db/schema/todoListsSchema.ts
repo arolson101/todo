@@ -1,5 +1,5 @@
 import { index } from 'drizzle-orm/sqlite-core'
-import { TodoListId } from '~/db/ids'
+import { TodoListChangeId, TodoListId } from '~/db/ids'
 import { _array, _blob, _bool, _idNano, _idNum, _refidStr, _text, _timestamp, createTable } from './_util'
 import { ydoc } from './types/ydoc-type'
 
@@ -15,6 +15,7 @@ export const todoLists = createTable('todo_list', {
 export const todoListUpdates = createTable(
   'todo_list_updates',
   {
+    id: _idNum<TodoListChangeId>('id'),
     listId: _refidStr<TodoListId>('list_id', () => todoLists.id).notNull(),
     update: _blob('update').notNull(),
   },

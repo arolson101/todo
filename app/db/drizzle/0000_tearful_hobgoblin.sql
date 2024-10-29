@@ -7,6 +7,7 @@ CREATE TABLE `todo_todos` (
 );
 --> statement-breakpoint
 CREATE TABLE `todo_todo_list_updates` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`list_id` text NOT NULL,
 	`update` blob NOT NULL,
 	FOREIGN KEY (`list_id`) REFERENCES `todo_todo_list`(`id`) ON UPDATE no action ON DELETE cascade

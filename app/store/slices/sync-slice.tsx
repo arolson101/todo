@@ -1,14 +1,14 @@
-import { count, eq, notInArray } from 'drizzle-orm'
+import { count, eq, inArray, notInArray } from 'drizzle-orm'
 import { fromUint8Array, toUint8Array } from 'js-base64'
 import throttle from 'throttleit'
 import * as Y from 'yjs'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
-import { TodoListId } from '~/db/ids'
+import { TodoListChangeId, TodoListId } from '~/db/ids'
 import { client } from '~/lib/trpc'
-import { ChangeSchema } from '~shared/models/change'
-import { YTodoList } from './todo-list'
+import { ClientChangeSchema, ServerChangeSchema } from '~shared/models/change'
 import { TodoListSlice } from './todo-list-slice'
+import { YTodoList } from './ytodolist'
 
 export interface SyncSlice {
   changeId: number
@@ -16,7 +16,7 @@ export interface SyncSlice {
 
   initSync(): Promise<any>
   onUpdateV2: (todoList: YTodoList) => (update: Uint8Array) => Promise<any>
-  onData(data: ChangeSchema[]): Promise<void>
+  onServerChange(data: ServerChangeSchema[]): Promise<void>
   syncDb(): void
 }
 
@@ -32,13 +32,13 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
     const sourceId = '123'
 
     // subscribe to changes
-    const { onData } = get()
+    const onData = get().onServerChange
     client.changes.streamChanges.subscribe({ changeId, sourceId }, { onData })
 
     set({ sourceId, changeId })
   },
 
-  async onData(data: ChangeSchema[]) {
+  async onServerChange(data: ServerChangeSchema[]) {
     await appDb.transaction(async tx => {
       let changeId = get().changeId
       const todoListUpdates = data.filter(update => update.docType === TodoList)
@@ -57,8 +57,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
 
         for (const entry of updates) {
           const update = toUint8Array(entry.update)
-          // TODO
-          // changeId = entry.changeId
+          changeId = entry.changeId
 
           Y.applyUpdateV2(ydoc, update)
         }
@@ -115,45 +114,53 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
   },
 
   syncDb: throttle(async () => {
+    const changes = [] as ClientChangeSchema[]
+    const changeIds = [] as TodoListChangeId[]
+
     await appDb.transaction(async tx => {
       const listIdRows = await appDb //
         .selectDistinct({ listId: schema.todoListUpdates.listId })
         .from(schema.todoListUpdates)
 
       const listIds = listIdRows.map(row => row.listId)
-      const changes = [] as ChangeSchema[]
 
       for (const listId of listIds) {
-        const updateCountRow = await appDb //
+        const [{ count: updateCount }] = await appDb //
           .select({ count: count() })
           .from(schema.todoListUpdates)
           .where(eq(schema.todoListUpdates.listId, listId))
-
-        if (!updateCountRow || updateCountRow.length === 0) {
-          throw new Error('no update count row!')
-        }
-
-        const updateCount = updateCountRow[0].count
 
         for (let offset = 0; offset < updateCount; offset += MAX_UPDATE_COUNT) {
           const updateRows = await tx.query.todoListUpdates //
             .findMany({
               where: (todoListIdUpdate, { eq }) => eq(todoListIdUpdate.listId, listId),
-              columns: { update: true },
+              columns: { id: true, update: true },
               offset,
               limit: MAX_UPDATE_COUNT,
             })
 
-          const update = Y.mergeUpdatesV2(updateRows.map(row => row.update))
-          changes.push({ update: fromUint8Array(update), docType: TodoList, docId: listId })
+          const mergedUpdates = Y.mergeUpdatesV2(updateRows.map(row => row.update))
+          const update = fromUint8Array(mergedUpdates)
+          changes.push({ update, docType: TodoList, docId: listId })
+          changeIds.push(...updateRows.map(row => row.id))
         }
       }
+    })
 
+    if (changes.length) {
+      console.log(`sending ${changes.length} changes`)
       const { sourceId } = get()
-      client.changes.send.query({
+      const ok = await client.changes.send.mutate({
         changes,
         sourceId,
       })
-    })
+
+      if (ok) {
+        console.log(`clearing ${changeIds.length} pending changes`)
+        await appDb //
+          .delete(schema.todoListUpdates)
+          .where(inArray(schema.todoListUpdates.id, changeIds))
+      }
+    }
   }, 15 * 1000),
 })

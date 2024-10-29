@@ -1,12 +1,10 @@
-import { TRPCError } from '@trpc/server'
 import { observable } from '@trpc/server/observable'
-import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { ChangeId, SourceId, UserId } from '~server/db/ids'
+import { SourceId, UserId } from '~server/db/ids'
 import * as schema from '~server/db/schema'
-import { Change, ChangeValues } from '~server/db/types'
+import { ChangeValues } from '~server/db/types'
 import { zAsyncGenerator } from '~server/util/zAsyncGenerator'
-import { changeSchema } from '~shared/models/change'
+import { ClientChangeSchema, ServerChangeSchema } from '~shared/models/change'
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 function delay(t: number) {
@@ -44,8 +42,9 @@ export const changeRouter = createTRPCRouter({
     }),
 
   send: protectedProcedure //
-    .input(z.object({ changes: z.array(changeSchema), sourceId: SourceId }))
-    .query(async ({ input: { sourceId, changes }, ctx }) => {
+    .input(z.object({ changes: z.array(ClientChangeSchema), sourceId: SourceId }))
+    .output(z.boolean())
+    .mutation(async ({ input: { sourceId, changes }, ctx }) => {
       if (changes.length > 0) {
         const userId = UserId.parse(ctx.session.user.id)
         const values = changes.map(change => ({
@@ -57,13 +56,14 @@ export const changeRouter = createTRPCRouter({
           .insert(schema.changes)
           .values(values)
       }
+      return true
     }),
 
   streamChanges: protectedProcedure //
     .input(z.object({ sourceId: SourceId, changeId: z.number() }))
     .output(
       zAsyncGenerator({
-        yield: z.array(changeSchema),
+        yield: z.array(ServerChangeSchema),
       }),
     )
     .subscription(async function* ({ input: { changeId, sourceId }, ctx }) {

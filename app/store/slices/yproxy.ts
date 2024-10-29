@@ -9,9 +9,9 @@ export type YProxy<T> = {
 
 // TODO: the typings on this could be improved
 export function yproxy<T extends {}>(
-  obj: Partial<T>, //
+  ymap: Y.Map<any>, //
+  obj: Partial<T>,
   keys: Array<keyof T & string>,
-  ymap: Y.Map<any>,
 ): YProxy<T> {
   const ret = {
     ...obj,

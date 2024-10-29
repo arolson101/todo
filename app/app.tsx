@@ -14,6 +14,11 @@ export function App() {
     init()
   }, [init])
 
+  const isInitialized = useAppStore(s => s.isInitialized)
+  if (!isInitialized) {
+    return null
+  }
+
   return (
     <SessionProvider>
       <TRPCReactProvider>

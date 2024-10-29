@@ -8,7 +8,7 @@ import { YProxy, yproxy } from './yproxy'
 export type YTodo = YProxy<Todo>
 
 function todoFactory(id: TodoId, listId: TodoListId, ymap: Y.Map<any>): YTodo {
-  const t = yproxy<YTodo>({ id, listId }, ['title', 'completed'], ymap)
+  const t = yproxy<YTodo>(ymap, { id, listId }, ['title', 'completed'])
   return t
 }
 

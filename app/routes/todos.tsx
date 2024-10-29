@@ -8,7 +8,7 @@ import { Checkbox } from '~/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { useAppStore } from '~/store'
-import { YTodo } from '~/store/slices/todo-list'
+import { YTodo } from '~/store/slices/ytodolist'
 
 export const Route = createFileRoute('/todos')({
   // beforeLoad({ context: { sessionRef } }) {

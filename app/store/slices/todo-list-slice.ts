@@ -4,7 +4,7 @@ import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
 import { TodoValues } from '~/db/types'
 import { SyncSlice } from './sync-slice'
-import { YTodoList } from './todo-list'
+import { YTodoList } from './ytodolist'
 
 export interface TodoListSlice {
   lists: Array<{ id: TodoListId; name: string }>
