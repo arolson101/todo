@@ -1,49 +1,51 @@
-import { count, eq, notInArray } from 'drizzle-orm'
+import { count } from 'drizzle-orm'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
 import { TodoValues } from '~/db/types'
-import { onUpdateV2, syncDb } from './sync'
+import { SyncSlice } from './sync-slice'
 import { YTodoList } from './todo-list'
 
 export interface TodoListSlice {
   lists: Array<{ id: TodoListId; name: string }>
   todoList: YTodoList
 
+  initTodoListSlice(): Promise<void>
   loadTodoList(id: TodoListId): Promise<void>
   createTodo(values: TodoValues): Promise<void>
   setTodoCompleted(id: TodoId, completed: boolean): Promise<void>
   removeTodo(id: TodoId): Promise<void>
 }
 
-export const createTodoListSlice = await (async function init() {
-  const lists = await loadLists()
-  const todoList = await loadTodoList(lists[0].id)
+export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], [], TodoListSlice> = (set, get) => ({
+  lists: [],
+  todoList: null!,
 
-  const slice: StateCreator<TodoListSlice> = (set, get) => ({
-    lists,
-    todoList,
+  async initTodoListSlice() {
+    const lists = await loadLists()
+    const todoList = await loadTodoList(lists[0].id)
+    todoList.ydoc.on('updateV2', get().onUpdateV2(todoList))
+    set({ lists, todoList })
+  },
 
-    async loadTodoList(id: TodoListId) {
-      const todoList = await loadTodoList(id)
-      get().todoList?.destroy()
-      set({ todoList })
-    },
+  async loadTodoList(id: TodoListId) {
+    const todoList = await loadTodoList(id)
+    get().todoList?.destroy()
+    set({ todoList })
+  },
 
-    async createTodo(values: TodoValues) {
-      get().todoList.add(values)
-    },
+  async createTodo(values: TodoValues) {
+    get().todoList.add(values)
+  },
 
-    async setTodoCompleted(id: TodoId, completed: boolean) {
-      get().todoList.get(id).completed = completed
-    },
+  async setTodoCompleted(id: TodoId, completed: boolean) {
+    get().todoList.get(id).completed = completed
+  },
 
-    async removeTodo(id: TodoId) {
-      get().todoList.del(id)
-    },
-  })
-  return slice
-})()
+  async removeTodo(id: TodoId) {
+    get().todoList.del(id)
+  },
+})
 
 // utiltity functions
 
@@ -80,6 +82,5 @@ async function loadTodoList(id: TodoListId) {
   }
 
   const todoList = new YTodoList(res.ydoc)
-  todoList.ydoc.on('updateV2', onUpdateV2(todoList))
   return todoList
 }

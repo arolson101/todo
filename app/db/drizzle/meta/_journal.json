@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1729973129110,
-      "tag": "0000_cultured_lockheed",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1730093043956,
-      "tag": "0001_tearful_monster_badoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1730095883834,
-      "tag": "0002_supreme_riptide",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1730098301836,
-      "tag": "0003_even_spyke",
+      "when": 1730173204275,
+      "tag": "0000_noisy_starfox",
       "breakpoints": true
     }
   ]

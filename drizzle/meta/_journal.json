@@ -36,6 +36,13 @@
       "when": 1728511788842,
       "tag": "0004_moaning_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1730170656510,
+      "tag": "0005_legal_siren",
+      "breakpoints": true
     }
   ]
 }

@@ -10,9 +10,11 @@ export const changes = createTable(
     changeId: _idNum('change_id'),
     sourceId: _text<SourceId>('source_id'),
     userId: _refidUUID<UserId>('user_id', () => users.id),
-    change: _text('change'),
+    docType: _text('doc_type'),
+    docId: _text('doc_id'),
+    update: _text('update'),
   },
-  (t) => ({
+  t => ({
     user: index('changes_user_id').on(t.userId),
     change: index('changes_userid_changeid_sourceid').on(t.userId, t.changeId, t.sourceId),
   }),

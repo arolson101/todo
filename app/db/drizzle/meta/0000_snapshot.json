@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1b03e541-761c-4da9-9b46-cee52927c242",
+  "id": "4b92dd44-6fd2-42f5-a830-c4d4f1253141",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "todo_todos": {
@@ -57,6 +57,51 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "todo_todo_list_updates": {
+      "name": "todo_todo_list_updates",
+      "columns": {
+        "list_id": {
+          "name": "list_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "update": {
+          "name": "update",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "list_id_idx": {
+          "name": "list_id_idx",
+          "columns": [
+            "list_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "todo_todo_list_updates_list_id_todo_todo_list_id_fk": {
+          "name": "todo_todo_list_updates_list_id_todo_todo_list_id_fk",
+          "tableFrom": "todo_todo_list_updates",
+          "tableTo": "todo_todo_list",
+          "columnsFrom": [
+            "list_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "todo_todo_list": {
       "name": "todo_todo_list",
       "columns": {
@@ -71,13 +116,6 @@
           "name": "base_doc",
           "type": "blob",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "delta": {
-          "name": "delta",
-          "type": "blob",
-          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
@@ -87,6 +125,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "modified": {
+          "name": "modified",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
         },
         "name": {
           "name": "name",
