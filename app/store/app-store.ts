@@ -27,7 +27,7 @@ export const useAppStore = create<AppState>()((set, get, ...rest) => {
 
       await Promise.allSettled([
         get().initSync(), //
-        get().initTodoListSlice(),
+        get().initTodoList(),
       ])
 
       set({ initState: 'initialized', isInitialized: true })

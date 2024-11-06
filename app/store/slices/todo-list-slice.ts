@@ -10,7 +10,7 @@ export interface TodoListSlice {
   lists: Array<{ id: TodoListId; name: string }>
   todoList: YTodoList
 
-  initTodoListSlice(): Promise<void>
+  initTodoList(): Promise<void>
   loadTodoList(id: TodoListId): Promise<void>
   createTodo(values: TodoValues): Promise<void>
   setTodoCompleted(id: TodoId, completed: boolean): Promise<void>
@@ -21,15 +21,50 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
   lists: [],
   todoList: null!,
 
-  async initTodoListSlice() {
-    const lists = await loadLists()
+  async initTodoList() {
+    const [{ todoListCount }] = await appDb //
+      .select({ todoListCount: count() })
+      .from(schema.todoLists)
+
+    if (todoListCount === 0) {
+      const list = new YTodoList()
+      list.name = 'To Do'
+      const { id, name, ydoc } = list
+      await appDb //
+        .insert(schema.todoLists)
+        .values({ id, name, ydoc })
+    }
+
+    const lists = await appDb.query.todoLists.findMany({
+      where: (todoLists, { isNotNull }) => isNotNull(todoLists.deleted),
+      columns: { id: true, name: true },
+    })
+    console.assert(lists.length > 0)
+
     set({ lists })
     get().loadTodoList(lists[0].id)
   },
 
   async loadTodoList(id: TodoListId) {
-    const todoList = await loadTodoList(id)
-    todoList.ydoc.on('updateV2', get().syncUpdateV2(todoList))
+    const res = await appDb.query.todoLists //
+      .findFirst({
+        where: (todoLists, { eq }) => eq(todoLists.id, id),
+      })
+    if (!res) {
+      throw new Error(`no todo list with id ${id}`)
+    }
+
+    const todoList = new YTodoList(res.ydoc)
+
+    todoList.ydoc.on('updateV2', async (update, _, ydoc) => {
+      // save doc to db
+      await appDb //
+        .update(schema.todoLists)
+        .set({ ydoc })
+        .where(eq(schema.todoLists.id, id))
+
+      get().syncUpdateV2(todoList, update)
+    })
 
     // clean up old list
     get().todoList?.destroy()
@@ -49,50 +84,3 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
     get().todoList.del(id)
   },
 })
-
-// utiltity functions
-
-async function loadLists() {
-  const [{ todoListCount }] = await appDb //
-    .select({ todoListCount: count() })
-    .from(schema.todoLists)
-
-  if (todoListCount === 0) {
-    const list = new YTodoList()
-    list.name = 'To Do'
-    const { id, name, ydoc } = list
-    await appDb //
-      .insert(schema.todoLists)
-      .values({ id, name, ydoc })
-  }
-
-  const lists = await appDb.query.todoLists.findMany({
-    where: (todoLists, { isNotNull }) => isNotNull(todoLists.deleted),
-    columns: { id: true, name: true },
-  })
-  console.assert(lists.length > 0)
-
-  return lists
-}
-
-async function loadTodoList(id: TodoListId) {
-  const res = await appDb.query.todoLists //
-    .findFirst({
-      where: (todoLists, { eq }) => eq(todoLists.id, id),
-    })
-  if (!res) {
-    throw new Error(`no todo list with id ${id}`)
-  }
-
-  const todoList = new YTodoList(res.ydoc)
-
-  todoList.ydoc.on('updateV2', async (_update, _, ydoc) => {
-    // save doc to db
-    await appDb //
-      .update(schema.todoLists)
-      .set({ ydoc })
-      .where(eq(schema.todoLists.id, id))
-  })
-
-  return todoList
-}

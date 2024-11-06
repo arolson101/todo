@@ -18,7 +18,7 @@ export interface SyncSlice {
 
   initSync(): Promise<any>
   startSync(): void
-  syncUpdateV2(todoList: YTodoList): (update: Uint8Array) => Promise<any>
+  syncUpdateV2(todoList: YTodoList, update: Uint8Array): Promise<any>
   syncDb(): void
 }
 
@@ -42,7 +42,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
     if (isSyncing) return
     set({ isSyncing: true })
 
-    // get().syncDb()
+    get().syncDb()
 
     return
     client.changes.streamChanges.subscribe(
@@ -101,7 +101,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
     )
   },
 
-  syncUpdateV2: (todoList: YTodoList) => async (update: Uint8Array) => {
+  async syncUpdateV2(todoList: YTodoList, update: Uint8Array) {
     console.log('syncUpdateV2')
     await appDb.transaction(async tx => {
       // update list
