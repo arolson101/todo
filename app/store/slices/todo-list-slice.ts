@@ -27,7 +27,7 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
       .from(schema.todoLists)
 
     if (todoListCount === 0) {
-      const list = new YTodoList()
+      const list = new YTodoList(TodoListId.parse('specialfirstid'))
       list.name = 'To Do'
       const { id, name, ydoc } = list
       await appDb //
@@ -54,8 +54,7 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
       throw new Error(`no todo list with id ${id}`)
     }
 
-    const todoList = new YTodoList(res.ydoc)
-
+    const todoList = new YTodoList(id, res.ydoc)
     todoList.ydoc.on('updateV2', async (update, _, ydoc) => {
       // save doc to db
       await appDb //

@@ -19,9 +19,9 @@ export class YTodoList {
   #name: Y.Text
   #idsInOrder: Y.Array<TodoId>
 
-  constructor(ydoc?: Y.Doc) {
+  constructor(id: TodoListId, ydoc?: Y.Doc) {
     this.#ydoc = ydoc ?? new Y.Doc()
-    this.#id = TodoListId.parse(nanoid())
+    this.#id = id
     this.#ymap = this.#ydoc.getMap()
     this.#name = this.#ydoc.getText('name')
     this.#idsInOrder = this.#ydoc.getArray('idsInOrder')

@@ -1,20 +1,23 @@
+import { Unsubscribable } from '@trpc/server/observable'
 import { count, eq, inArray, notInArray } from 'drizzle-orm'
 import { fromUint8Array, toUint8Array } from 'js-base64'
+import { nanoid } from 'nanoid'
 import throttle from 'throttleit'
 import * as Y from 'yjs'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoListChangeId, TodoListId } from '~/db/ids'
 import { client } from '~/lib/trpc'
-import { ClientChangeSchema, ServerChangeSchema, SourceId } from '~shared/models/change'
+import { ChangeId, ClientChangeSchema, ServerChangeSchema, SourceId } from '~shared/models/change'
 import { TodoListSlice } from './todo-list-slice'
 import { YTodoList } from './ytodolist'
 
 export interface SyncSlice {
-  changeId: number
+  changeId: ChangeId
   sourceId: SourceId
   isSyncing: boolean
   syncError: Error | undefined
+  streamChangeSubscription: Unsubscribable | undefined
 
   initSync(): Promise<any>
   startSync(): void
@@ -30,26 +33,35 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
   changeId: null!,
   isSyncing: false,
   syncError: undefined,
+  streamChangeSubscription: undefined,
 
   async initSync() {
-    const changeId = 0
-    const sourceId = SourceId.parse('123')
+    const sourceId = SourceId.parse(localStorage.getItem('sourceId') ?? nanoid())
+    localStorage.setItem('sourceId', sourceId)
+
+    const changeId = ChangeId.parse(parseInt(localStorage.getItem('changeId') ?? '0'))
+    localStorage.setItem('changeId', changeId.toString())
+
     set({ sourceId, changeId })
   },
 
   async startSync() {
-    const { isSyncing, changeId, sourceId } = get()
+    const { isSyncing, changeId, sourceId, streamChangeSubscription: oldSubcription } = get()
     if (isSyncing) return
     set({ isSyncing: true })
 
     get().syncDb()
 
-    return
-    client.changes.streamChanges.subscribe(
+    if (oldSubcription) {
+      console.log('oldSubcription')
+    }
+
+    oldSubcription?.unsubscribe()
+    const streamChangeSubscription = client.changes.streamChanges.subscribe(
       { changeId, sourceId },
       {
         async onData(data: ServerChangeSchema[]) {
-          console.log('onData', data)
+          // console.log('onData', data)
           await appDb.transaction(async tx => {
             let changeId = get().changeId
             const todoListUpdates = data.filter(update => update.docType === TodoList)
@@ -64,7 +76,8 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
               })
 
               if (!row) continue
-              const ydoc = listId === get().todoList.id ? get().todoList.ydoc : row.ydoc
+              const { todoList } = get()
+              const ydoc = listId === todoList.id ? todoList.ydoc : row.ydoc
 
               for (const entry of updates) {
                 const update = toUint8Array(entry.update)
@@ -99,10 +112,11 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
         },
       },
     )
+
+    set({ streamChangeSubscription })
   },
 
   async syncUpdateV2(todoList: YTodoList, update: Uint8Array) {
-    console.log('syncUpdateV2')
     await appDb.transaction(async tx => {
       // update list
       {
@@ -144,20 +158,20 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
   },
 
   syncDb: throttle(async () => {
-    console.log('syncDb')
+    // console.log('syncDb')
 
     const changes = [] as ClientChangeSchema[]
     const changeIds = [] as TodoListChangeId[]
 
     await appDb.transaction(async tx => {
-      const listIdRows = await appDb //
+      const listIdRows = await tx //
         .selectDistinct({ listId: schema.todoListUpdates.listId })
         .from(schema.todoListUpdates)
 
       const listIds = listIdRows.map(row => row.listId)
 
       for (const listId of listIds) {
-        const [{ updateCount }] = await appDb //
+        const [{ updateCount }] = await tx //
           .select({ updateCount: count() })
           .from(schema.todoListUpdates)
           .where(eq(schema.todoListUpdates.listId, listId))
