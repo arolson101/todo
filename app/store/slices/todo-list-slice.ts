@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm'
+import { count } from 'drizzle-orm'
 import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoId, TodoListId } from '~/db/ids'
@@ -17,6 +17,8 @@ export interface TodoListSlice {
   removeTodo(id: TodoId): Promise<void>
 }
 
+const INIT_ID = TodoListId.parse('specialfirstid')
+
 export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], [], TodoListSlice> = (set, get) => ({
   lists: [],
   todoList: null!,
@@ -27,7 +29,8 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
       .from(schema.todoLists)
 
     if (todoListCount === 0) {
-      const list = new YTodoList(TodoListId.parse('specialfirstid'))
+      console.log('creating default todo list')
+      const list = new YTodoList(INIT_ID)
       list.name = 'To Do'
       const { id, name, ydoc } = list
       await appDb //
@@ -55,14 +58,8 @@ export const createTodoListSlice: StateCreator<SyncSlice & TodoListSlice, [], []
     }
 
     const todoList = new YTodoList(id, res.ydoc)
-    todoList.ydoc.on('updateV2', async (update, _, ydoc) => {
-      // save doc to db
-      await appDb //
-        .update(schema.todoLists)
-        .set({ ydoc })
-        .where(eq(schema.todoLists.id, id))
-
-      get().syncUpdateV2(todoList, update)
+    todoList.ydoc.on('updateV2', async (update, origin) => {
+      get().syncUpdateV2(todoList, update, origin)
     })
 
     // clean up old list

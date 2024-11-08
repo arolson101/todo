@@ -8,12 +8,12 @@ import { StateCreator } from 'zustand'
 import { appDb, schema } from '~/db'
 import { TodoListChangeId, TodoListId } from '~/db/ids'
 import { client } from '~/lib/trpc'
-import { ChangeId, ClientChangeSchema, ServerChangeSchema, SourceId } from '~shared/models/change'
+import { ChangeId, ChangeSchema, SourceId } from '~shared/models/change'
 import { TodoListSlice } from './todo-list-slice'
 import { YTodoList } from './ytodolist'
 
 export interface SyncSlice {
-  changeId: ChangeId
+  lastEventId: ChangeId | undefined
   sourceId: SourceId
   isSyncing: boolean
   syncError: Error | undefined
@@ -21,16 +21,18 @@ export interface SyncSlice {
 
   initSync(): Promise<any>
   startSync(): void
-  syncUpdateV2(todoList: YTodoList, update: Uint8Array): Promise<any>
+  syncUpdateV2(todoList: YTodoList, update: Uint8Array, origin: any): Promise<any>
   syncDb(): void
 }
 
+export const REMOTE_ORIGIN = 'remote'
+const THROTTLE_UPDATE_TIME_MS = 1
 const MAX_UPDATE_COUNT = 20
-const TodoList = 'TodoList'
+const TODO_LIST_DOC_TYPE = 'TodoList'
 
 export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], SyncSlice> = (set, get) => ({
   sourceId: null!,
-  changeId: null!,
+  lastEventId: undefined,
   isSyncing: false,
   syncError: undefined,
   streamChangeSubscription: undefined,
@@ -39,32 +41,26 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
     const sourceId = SourceId.parse(localStorage.getItem('sourceId') ?? nanoid())
     localStorage.setItem('sourceId', sourceId)
 
-    const changeId = ChangeId.parse(parseInt(localStorage.getItem('changeId') ?? '0'))
-    localStorage.setItem('changeId', changeId.toString())
+    const { data: lastEventId } = ChangeId.safeParse(localStorage.getItem('lastEventId'))
 
-    set({ sourceId, changeId })
+    set({ sourceId, lastEventId })
   },
 
   async startSync() {
-    const { isSyncing, changeId, sourceId, streamChangeSubscription: oldSubcription } = get()
+    const { isSyncing, lastEventId, sourceId, streamChangeSubscription: oldSubcription } = get()
     if (isSyncing) return
     set({ isSyncing: true })
 
     get().syncDb()
 
-    if (oldSubcription) {
-      console.log('oldSubcription')
-    }
-
     oldSubcription?.unsubscribe()
+
     const streamChangeSubscription = client.changes.streamChanges.subscribe(
-      { changeId, sourceId },
+      { lastEventId, sourceId },
       {
-        async onData(data: ServerChangeSchema[]) {
-          // console.log('onData', data)
+        async onData([id, data]) {
           await appDb.transaction(async tx => {
-            let changeId = get().changeId
-            const todoListUpdates = data.filter(update => update.docType === TodoList)
+            const todoListUpdates = data.filter(update => update.docType === TODO_LIST_DOC_TYPE)
             const groupedUpdates = Object.groupBy(todoListUpdates, update => update.docId)
             for (const [docId, updates] of Object.entries(groupedUpdates)) {
               if (!updates) continue
@@ -81,9 +77,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
 
               for (const entry of updates) {
                 const update = toUint8Array(entry.update)
-                changeId = entry.changeId
-
-                Y.applyUpdateV2(ydoc, update)
+                Y.applyUpdateV2(ydoc, update, REMOTE_ORIGIN)
               }
 
               await tx //
@@ -92,7 +86,8 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
                 .where(eq(schema.todoLists.id, listId))
             }
 
-            set({ changeId })
+            localStorage.setItem('lastEventId', id.toString())
+            set({ lastEventId: ChangeId.parse(id) })
           })
         },
 
@@ -116,7 +111,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
     set({ streamChangeSubscription })
   },
 
-  async syncUpdateV2(todoList: YTodoList, update: Uint8Array) {
+  async syncUpdateV2(todoList: YTodoList, update: Uint8Array, origin: any) {
     await appDb.transaction(async tx => {
       // update list
       {
@@ -128,9 +123,11 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
       }
 
       // save update
-      await tx //
-        .insert(schema.todoListUpdates)
-        .values({ listId: todoList.id, update })
+      if (origin !== REMOTE_ORIGIN) {
+        await tx //
+          .insert(schema.todoListUpdates)
+          .values({ listId: todoList.id, update })
+      }
 
       // upsert todos
       for (const { id, useValues, ...set } of todoList.todos) {
@@ -158,9 +155,7 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
   },
 
   syncDb: throttle(async () => {
-    // console.log('syncDb')
-
-    const changes = [] as ClientChangeSchema[]
+    const changes = [] as ChangeSchema[]
     const changeIds = [] as TodoListChangeId[]
 
     await appDb.transaction(async tx => {
@@ -187,14 +182,13 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
 
           const mergedUpdates = Y.mergeUpdatesV2(updateRows.map(row => row.update))
           const update = fromUint8Array(mergedUpdates)
-          changes.push({ update, docType: TodoList, docId: listId })
+          changes.push({ update, docType: TODO_LIST_DOC_TYPE, docId: listId })
           changeIds.push(...updateRows.map(row => row.id))
         }
       }
     })
 
     if (changes.length) {
-      console.log(`sending ${changes.length} changes`, changes)
       const { sourceId } = get()
       const ok = await client.changes.send.mutate({
         changes,
@@ -202,11 +196,10 @@ export const createSyncSlice: StateCreator<SyncSlice & TodoListSlice, [], [], Sy
       })
 
       if (ok) {
-        console.log(`clearing ${changeIds.length} pending changes`, changeIds)
         await appDb //
           .delete(schema.todoListUpdates)
           .where(inArray(schema.todoListUpdates.id, changeIds))
       }
     }
-  }, 15 * 1000),
+  }, THROTTLE_UPDATE_TIME_MS),
 })

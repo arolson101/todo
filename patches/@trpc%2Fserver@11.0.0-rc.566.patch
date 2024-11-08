@@ -1,0 +1,21 @@
+diff --git a/dist/unstable-core-do-not-import/procedureBuilder.d.ts b/dist/unstable-core-do-not-import/procedureBuilder.d.ts
+index 592496a1d2b85c984a0ae0a878802cd4cd87d763..75f79440b0ee6258d6514f5d0f19d67bf49f9397 100644
+--- a/dist/unstable-core-do-not-import/procedureBuilder.d.ts
++++ b/dist/unstable-core-do-not-import/procedureBuilder.d.ts
+@@ -2,7 +2,6 @@ import type { inferObservableValue, Observable } from '../observable';
+ import type { AnyMiddlewareFunction, MiddlewareBuilder, MiddlewareFunction } from './middleware';
+ import type { inferParser, Parser } from './parser';
+ import type { AnyProcedure, LegacyObservableSubscriptionProcedure, MutationProcedure, ProcedureType, QueryProcedure, SubscriptionProcedure } from './procedure';
+-import type { inferTrackedOutput } from './stream/tracked';
+ import type { GetRawInputFn, MaybePromise, Overwrite, Simplify, TypeError } from './types';
+ import type { UnsetMarker } from './utils';
+ type IntersectIfDefined<TType, TWith> = TType extends UnsetMarker ? TWith : TWith extends UnsetMarker ? TType : Simplify<TType & TWith>;
+@@ -12,7 +11,7 @@ type inferAsyncIterator<TOutput> = TOutput extends AsyncIterator<infer $Yield, i
+     return: $Return;
+     next: $Next;
+ } : never;
+-type inferSubscriptionOutput<TOutput> = TOutput extends AsyncGenerator ? AsyncGenerator<inferTrackedOutput<inferAsyncIterator<TOutput>['yield']>, inferAsyncIterator<TOutput>['return'], inferAsyncIterator<TOutput>['next']> : TypeError<'Subscription output could not be inferred'>;
++type inferSubscriptionOutput<TOutput> = TOutput extends AsyncGenerator ? AsyncGenerator<inferAsyncIterator<TOutput>['yield'], inferAsyncIterator<TOutput>['return'], inferAsyncIterator<TOutput>['next']> : TypeError<'Subscription output could not be inferred'>;
+ export type CallerOverride<TContext> = (opts: {
+     args: unknown[];
+     invoke: (opts: ProcedureCallOptions<TContext>) => Promise<unknown>;
